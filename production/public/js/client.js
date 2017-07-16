@@ -1,0 +1,1 @@
+$(()=>{const socket=io();$("#chat").submit(function(){return socket.emit("submit message",$("#messageInput").val()),$("#messageInput").val(""),!1}),socket.on("broadcast message",function(msg){$("#messages").append($("<li>").text(msg)),window.scrollTo(0,document.body.scrollHeight)})});
