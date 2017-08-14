@@ -81,6 +81,25 @@ module.exports = (grunt) => {
       },
     },
 
+    concat: {
+      options: {
+        banner: '$(() => {\n',
+        footer: '});\n',
+        gruntLogHeader: false,
+        separator: ';\n',
+        stripBanners: true,
+      },
+      dev: {
+        src: ['public/js/include.js', 'public/js/register.js', 'public/js/*.js', '!public/js/client.js', '!public/js/jquery-3.2.1.min.js'],
+        dest: 'public/js/client.js',
+      },
+      prod: {
+        src: ['production/public/js/include.js', 'production/public/js/register.js', 'production/public/js/*',
+              '!production/public/js/client.js', '!production/public/js/jquery-3.2.1.min.js'],
+        dest: 'production/public/js/client.js',
+      },
+    },
+
     copy: {
       dev: {
         expand: true,
@@ -93,6 +112,7 @@ module.exports = (grunt) => {
 
     clean: {
       all: ['production/*', 'production/?(logs|public|test)/**/*'],
+      prod_client: ['production/public/js/*', '!production/public/js/client.js', '!production/public/js/jquery-3.2.1.min.js'],
     },
   });
 
@@ -100,6 +120,7 @@ module.exports = (grunt) => {
 // ==================== TASKS ==========================
   require('grunt-log-headers')(grunt);
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -114,19 +135,27 @@ module.exports = (grunt) => {
     grunt.task.run('test:dev', 'make', 'test:prod');
   });
 
-  grunt.registerTask('test', (env, suite) => {
+  grunt.registerTask('test', (env = 'dev', suite = 'all') => {
     grunt.task.run('force:on',
+                   `browserify:${env}`,
                    'shell:stop',
-                   `shell:start_${env || 'dev'}`,
-                   `mochaTest:${suite || 'all'}`,
+                   `shell:start_${env}`,
+                   `mochaTest:${suite}`,
                    'force:off',
                    'shell:stop',
-                   `exitWithTestStatus:${suite || 'all'}`);
+                   `exitWithTestStatus:${suite}`);
   });
 
   grunt.registerTask('exitWithTestStatus', (suite) => {
     grunt.task.requires([`mochaTest:${suite}`]);
     return true;
+  });
+
+  grunt.registerTask('browserify', (env = 'dev') => {
+    grunt.task.run(`concat:${env}`);
+    if (env === 'prod') {
+      grunt.task.run('clean:prod_client');
+    }
   });
 
   grunt.registerTask('make', () => {

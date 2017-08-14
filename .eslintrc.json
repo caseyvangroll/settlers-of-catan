@@ -6,6 +6,7 @@
         "max-len": 0,
         "linebreak-style": 0,
         "no-empty": 0,
+        "no-param-reassign": 0,
         "brace-style": 0
     }
 }

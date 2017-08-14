@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 
 const user = new mongoose.Schema({
-  name: String,
-  secret: String,
-  admin: Boolean,
+  ip: String,
+  nickname: String,
+  state: String,
+  token: String,
 });
 
 module.exports = mongoose.model('User', user);

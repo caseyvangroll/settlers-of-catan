@@ -8,7 +8,9 @@ const request = require('supertest');
 
 // Fields
 const baseUrl = 'http://localhost:3000';
-const paths = ['/', '/index.html', '/logs/'];
+const paths = [{ path: '/', result: 302 },
+               { path: '/enter.html', result: 200 },
+               { path: '/logs/', result: 200 }];
 const options = { transports: ['websocket'], 'force new connection': true };
 
 
@@ -19,8 +21,8 @@ describe('Server', () => {
     paths.forEach((path) => {
       it(`GET [localhost:3000${path}]`, (done) => {
         request(baseUrl)
-          .get(path)
-          .expect(200, done);
+          .get(path.path)
+          .expect(path.result, done);
       });
     });
   });
