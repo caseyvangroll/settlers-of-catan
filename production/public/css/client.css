@@ -62,7 +62,7 @@ input.chat-form {
 }
 button.chat-form {
 	vertical-align: middle;
-	background: url('http://localhost:3000/img/send-button.png');
+	background: url('http://gravitypond.com/img/send-button.png');
 	background-size: 100% 100%;
 	height:28px;
 	width:28px;
