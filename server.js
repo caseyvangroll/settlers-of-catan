@@ -25,13 +25,7 @@ const mongoConfig = require('./mongoConfig.js');
 const User = require('./models/user.js');
 
 // ==================== STATIC FILES ==========================
-// etag and cacheing prevents express from caching files client-side - fucks with socket stuff
 app.use(express.static('public'));
-// app.set('etag', false);
-// app.use((req, res, next) => {
-//   res.setHeader('Cache-Control', 'private, max-age=0');
-//   next();
-// });
 app.use('/logs', express.static('logs'));
 app.use('/logs', serveIndex('logs', { stylesheet: `${__dirname}/public/css/logs.css`, icons: true }));
 
@@ -105,7 +99,7 @@ io.on('connection', (socket) => {
 
   socket.on('submit message', (msg) => {
     Log.chat(`  ${socket.nickname}: ${msg}`);
-    io.emit('broadcast message', msg);
+    io.emit('broadcast message', socket.nickname, msg);
   });
 
   socket.on('disconnect', () => {

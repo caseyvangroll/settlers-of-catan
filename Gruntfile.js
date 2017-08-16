@@ -4,7 +4,7 @@ const prod = {
   dir: 'production/',
   html: ['public/**/*.html'],
   js: ['**/*.js', '!**/test/**', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
-  misc: ['*', 'public/**/*', '!.*', '!**/*.js', '!**/*.html', '!README.md', '!**/?(logs|node_modules|production|test)/**'],
+  misc: ['*', 'public/**/*', '!*.*', '!**/*.js', '!**/*.html', '!README.md', '!**/?(logs|node_modules|production|test)/**'],
   watch: ['**/*.js', 'public/**/*.html', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
 };
 
@@ -53,6 +53,20 @@ module.exports = (grunt) => {
 
 
 // ==================== BUILD ==========================
+
+    babel: {
+      options: {
+        presets: ['env'],
+      },
+      dev: {
+        src: 'public/js/client.js',
+        dest: 'public/js/client.js',
+      },
+      prod: {
+        src: 'production/public/js/client.js',
+        dest: 'production/public/js/client.js',
+      },
+    },
 
     uglify: {
       options: {
@@ -119,6 +133,7 @@ module.exports = (grunt) => {
 
 // ==================== TASKS ==========================
   require('grunt-log-headers')(grunt);
+  grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-copy');
@@ -151,8 +166,10 @@ module.exports = (grunt) => {
     return true;
   });
 
+  // Merge all js files in public/js into one client.js file, then transpile to es5
   grunt.registerTask('browserify', (env = 'dev') => {
-    grunt.task.run(`concat:${env}`);
+    grunt.task.run(`concat:${env}`,
+                   `babel:${env}`);
     if (env === 'prod') {
       grunt.task.run('clean:prod_client');
     }

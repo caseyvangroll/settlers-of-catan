@@ -1,20 +1,28 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Settlers of Catan</title>
-    <script src='/socket.io/socket.io.js'></script>
-    <script src='/js/jquery-3.2.1.min.js'></script>
-    <script src='/js/client.js'></script>
-    <link rel="stylesheet" type="text/css" href="css/client.css">
+<meta charset="UTF-8">
+<title>Settlers of Catan</title>
+<script type="text/javascript" src="socket.io/socket.io.js"></script>
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="js/client.js"></script>
+<link rel="stylesheet" type="text/css" href="css/client.css">
 </head>
 <body>
-    <center>
-        <form id="chat" action="">
-      <input id="messageInput" autocomplete="off" /><button id="messageSend">Send</button>
-    </form>
-    <ul id="messages">
-    </ul>
-    </center>
+<div class = "game-page">
+  <div class = "chat-overlay">
+    <div class = "chat-messages">
+      <ul id="messages"></ul>
+    </div>
+    <div class = "chat-form">
+        <form class="chat-form" action="">
+         
+          <input class="chat-form" autocomplete="off" />
+          <button class="chat-form" onclick="sendMessage();" />
+          
+        </form>
+    </div>
+  </div>
+</div>
 </body>
 </html>

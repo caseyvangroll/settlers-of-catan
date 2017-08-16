@@ -42,7 +42,7 @@ describe('Server', () => {
       const client1 = io.connect(baseUrl, options);
 
       const check = (client) => {
-        client.on('broadcast message', (msg) => {
+        client.on('broadcast message', (nickname, msg) => {
           expect(msg, '[ Message is broadcasted back to all users. ]').to.equal('Testing...');
           client.disconnect();
           if (++received === 3) { done(); }
