@@ -12,7 +12,7 @@ $(function () {
 
   // Add received messages to the chat (and scroll to see them)
   socket.on('broadcast message', function (nickname, msg) {
-    $('#messages').prepend('<li><b>' + nickname + '</b>: ' + msg + '</li>');
-    $("div.chat-messages ul").animate({ scrollTop: 0 }, "fast");
+    $('#messages').append('<li><b>' + nickname + '</b>: ' + msg + '</li>');
+    $("div.chat-messages ul").animate({ scrollTop: $("div.chat-messages ul")[0].scrollHeight }, "fast");
   });
 });
