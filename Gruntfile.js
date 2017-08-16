@@ -3,7 +3,7 @@
 const prod = {
   dir: 'production/',
   html: ['public/**/*.html'],
-  js: ['**/*.js', '!**/test/**', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
+  js: ['*.js', 'models/**/*.js', 'public/js/client.js', 'public/js/jquery-3.2.1.min.js', '!**/test/**', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
   misc: ['*', 'public/**/*', '!*.*', '!**/*.js', '!**/*.html', '!README.md', '!**/?(logs|node_modules|production|test)/**'],
   watch: ['**/*.js', 'public/**/*.html', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
 };
@@ -26,9 +26,9 @@ module.exports = (grunt) => {
         gruntLogHeader: false,
         stderr: false,
       },
-      start_dev: 'pm2 start server.js --name dev_server -- test > NUL',
+      start_dev: 'pm2 start server.js --name dev_server -- test > NUL', // force a happy exit code even if warned
       start_prod: 'pm2 start production/server.js --name prod_server -- test > NUL',
-      stop: 'pm2 stop all > NUL',
+      stop: 'pm2 stop all > NUL || true',
     },
 
     mochaTest: {
@@ -61,10 +61,6 @@ module.exports = (grunt) => {
       dev: {
         src: 'public/js/client.js',
         dest: 'public/js/client.js',
-      },
-      prod: {
-        src: 'production/public/js/client.js',
-        dest: 'production/public/js/client.js',
       },
     },
 
@@ -106,11 +102,6 @@ module.exports = (grunt) => {
       dev: {
         src: ['public/js/include.js', 'public/js/register.js', 'public/js/*.js', '!public/js/client.js', '!public/js/jquery-3.2.1.min.js'],
         dest: 'public/js/client.js',
-      },
-      prod: {
-        src: ['production/public/js/include.js', 'production/public/js/register.js', 'production/public/js/*',
-              '!production/public/js/client.js', '!production/public/js/jquery-3.2.1.min.js'],
-        dest: 'production/public/js/client.js',
       },
     },
 
@@ -168,10 +159,9 @@ module.exports = (grunt) => {
 
   // Merge all js files in public/js into one client.js file, then transpile to es5
   grunt.registerTask('browserify', (env = 'dev') => {
-    grunt.task.run(`concat:${env}`,
-                   `babel:${env}`);
-    if (env === 'prod') {
-      grunt.task.run('clean:prod_client');
+    if (env === 'dev') {
+      grunt.task.run(`concat:${env}`,
+                     `babel:${env}`);
     }
   });
 

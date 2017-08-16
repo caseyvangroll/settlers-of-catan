@@ -17,7 +17,8 @@
     </div>
     <div class = "chat-form">
         <form class="chat-form" action="">
-          <input class="chat-form" autocomplete="off" />
+          <input class="chat-form" autocomplete="off"
+                 pattern='.+' oninvalid="this.setCustomValidity('Words go here.')" oninput="this.setCustomValidity('')" maxlength="500" required/>
           <button class="chat-form" />
         </form>
     </div>
