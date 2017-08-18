@@ -3,7 +3,7 @@
 const prod = {
   dir: 'production/',
   html: ['public/**/*.html'],
-  js: ['*.js', 'models/**/*.js', 'public/js/client.js', 'public/js/jquery-3.2.1.min.js', '!**/test/**', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
+  js: ['*.js', 'models/**/*.js', 'public/js/client.js', '!**/test/**', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
   misc: ['*', 'public/**/*', '!*.*', '!**/*.js', '!**/*.html', '!README.md', '!**/?(logs|node_modules|production|test)/**'],
   watch: ['**/*.js', 'public/**/*.html', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
 };
@@ -100,7 +100,7 @@ module.exports = (grunt) => {
         stripBanners: true,
       },
       dev: {
-        src: ['public/js/include.js', 'public/js/register.js', 'public/js/*.js', '!public/js/client.js', '!public/js/jquery-3.2.1.min.js'],
+        src: ['public/js/include.js', 'public/js/register.js', 'public/js/*.js', '!public/js/client.js'],
         dest: 'public/js/client.js',
       },
     },
@@ -117,7 +117,7 @@ module.exports = (grunt) => {
 
     clean: {
       all: ['production/*', 'production/?(logs|public|test)/**/*'],
-      prod_client: ['production/public/js/*', '!production/public/js/client.js', '!production/public/js/jquery-3.2.1.min.js'],
+      prod_client: ['production/public/js/*', '!production/public/js/client.js'],
     },
   });
 
