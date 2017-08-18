@@ -8,9 +8,7 @@ body {
 
 .chat-overlay {
 	position: fixed; /* Sit on top of the page content */
-	/*display: none;  Hidden by default */
-	min-width: 300px;
-	width: 20%;
+	width: 300px;
 	height: 84%;
 	top: 2%;
 	bottom:8%;
@@ -18,8 +16,8 @@ body {
 	font: 18px "Gill Sans MT", "Lucida Grande", "Arial";
 	border-width: 1px;
 	border-right-width: 0px;
+	border-color: rgba(155,155,155, 1);;
 	border-style:solid;
-/*	border-radius: 12px;*/
 	background-color: rgba(255,255,255,1);
 	z-index: 2;
 }
@@ -28,8 +26,10 @@ div.chat-handle {
 	background-color: rgba(155,155,155, 1);
 	height:100%;
 	width:10px;
+	right: 292px;
 	position:absolute;
 }
+
 
 div.chat-messages {
 	overflow-y: auto;
@@ -56,6 +56,17 @@ div.chat-messages ul li {
 	word-break: break-all;
 	position:relative;
 	bottom:0;
+}
+
+div.chat-messages ul li.join-message {
+	font-size:15px;
+	color: white;
+	background-color:grey;
+	border-radius: 14px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 div.chat-form {

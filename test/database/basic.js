@@ -16,12 +16,14 @@ const compare = require('../modelComparator.js');
 // TODO: update to reflect new user keys
 
 const initialUser = new User({
+  color: '#330000',
   ip: '127.0.0.1',
   nickname: 'Initial User',
   state: 'Connecting...',
   token: 'ethaseiuath98q3h489qthgiu4wagsejkgkaesjtjab4owtoaenszgtnsesaset',
 });
 const updates = {
+  color: '#330001',
   ip: '127.0.0.5',
   nickname: 'Updated User',
   state: 'Disconnected.',

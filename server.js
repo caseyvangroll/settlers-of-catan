@@ -17,6 +17,15 @@ const port = 3000;
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// temporarily assign arbitrary colors to users
+let colors = ['#40A346', '#406CA3', '#C75FC2', '#D10F0F'];
+const chosenColors = [];
+const randomColor = () => {
+  if (colors.length === 0) { colors = chosenColors.slice(); } // clone
+  const color = colors.splice(Math.floor(Math.random() * colors.length), 1); // remove random color
+  chosenColors.push(color); // push into chosen
+  return color;
+};
 
 // ==================== DATABASE ==========================
 const mongoose = require('mongoose');
@@ -67,6 +76,7 @@ app.post('/enter.html', (req, res) => {
   // Create new token with ip & nickname, sign with secret
   jwt.sign({ nickname: req.body.nickname }, mongoConfig.prod.secret, (err, newToken) => {
     new User({
+      color: randomColor(),
       ip: userIP,
       nickname: req.body.nickname,
       state: 'Connecting...',
@@ -89,24 +99,30 @@ io.on('connection', (socket) => {
     const decodedToken = jwt.verify(signedToken, mongoConfig.prod.secret);
     // Find user with nickname and token, then bind socket to it
     User.findOneAndUpdate({ nickname: decodedToken.nickname, token: signedToken }, { state: 'Connected.' }, (err, found) => {
+      socket.color = found.color;
       socket.ip = found.ip;
       socket.nickname = found.nickname;
       socket.state = found.state;
       socket.token = found.token;
       Log.socket({ action: `Bind ${ip} => ${socket.nickname}` });
+      io.emit('chat action', socket.nickname, 'joined');
     });
+    
   });
 
   socket.on('submit message', (msg) => {
     Log.chat(`  ${socket.nickname}: ${msg}`);
-    io.emit('broadcast message', socket.nickname, msg);
+    io.emit('broadcast message', socket.nickname, socket.color, msg);
   });
 
   socket.on('disconnect', () => {
+    io.emit('chat action', socket.nickname, 'left');
     User.findOneAndUpdate({ token: socket.token }, { state: 'Disconnected.' }, () => {
       Log.socket({ action: 'Close Socket', agent: socket.nickname });
     });
   });
+
+  
 });
 
 // ==================== START APP ========================
