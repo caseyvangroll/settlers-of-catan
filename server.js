@@ -2,6 +2,7 @@
 const express = require('express');
 const app = express();
 const geoip = require('geoip-lite');
+const countrynames = require('countrynames');
 const server = require('http').createServer(app);
 const serveIndex = require('serve-index');
 const io = require('socket.io').listen(server);
@@ -43,8 +44,10 @@ app.use('/logs', serveIndex('logs', { stylesheet: `${__dirname}/public/css/logs.
 
 // Retrieves origin of an IP
 const lookup = (ip) => {
-  const result = geoip.pretty(ip);
-  return result || 'Unknown';
+  const result = geoip.lookup(ip);
+  return result ?
+    `${result.city}, ${countrynames.getName(result.country)}`
+    : 'Unknown';
 };
 
 // Initial (Connect or Reconnect)
