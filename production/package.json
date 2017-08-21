@@ -1,0 +1,46 @@
+{
+  "name": "settlers-of-catan",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "cookie": "^0.3.1",
+    "cookie-parser": "^1.4.3",
+    "express": "~4.5.1",
+    "geoip-lite": "^1.2.1",
+    "http": "0.0.0",
+    "jsonwebtoken": "^7.4.2",
+    "mongodb": "^2.2.30",
+    "mongoose": "^4.11.5",
+    "serve-index": "^1.9.0",
+    "socket.io": "^2.0.3",
+    "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-preset-env": "^1.6.0",
+    "chai": "^4.1.0",
+    "chai-mongoose": "0.0.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.2.0",
+    "grunt": "^1.0.1",
+    "grunt-babel": "^7.0.0",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-htmlmin": "^2.4.0",
+    "grunt-contrib-uglify": "git://github.com/gruntjs/grunt-contrib-uglify.git#harmony",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-force": "^1.0.0",
+    "grunt-log-headers": "^1.0.2",
+    "grunt-mocha-test": "^0.13.2",
+    "grunt-shell": "^2.1.0",
+    "load-grunt-tasks": "^3.5.2",
+    "mocha": "^3.4.2",
+    "mocha-clean": "^1.0.0",
+    "supertest": "^3.0.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  }
+}

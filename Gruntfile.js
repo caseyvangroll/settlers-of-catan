@@ -4,7 +4,7 @@ const prod = {
   dir: 'production/',
   html: ['public/**/*.html'],
   js: ['*.js', 'models/**/*.js', 'public/js/client.js', '!**/test/**', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
-  misc: ['*', 'public/**/*', '!*.*', '!**/*.js', '!**/*.html', '!README.md', '!**/?(logs|node_modules|production|test)/**'],
+  misc: ['package.json', 'public/**/*', '!.*', '!**/*.js', '!**/*.html', '!**/?(logs|node_modules|production|test)/**'],
   watch: ['**/*.js', 'public/**/*.html', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
 };
 
