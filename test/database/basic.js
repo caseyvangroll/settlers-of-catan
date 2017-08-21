@@ -46,7 +46,7 @@ describe('Database', () => {
     // Retrieve Initial User
     it('Retrieve', (done) => {
       User.findOne({ nickname: 'Initial User' }, (error, foundUser) => {
-        compare(foundUser, initialUser, true);
+        compare(foundUser, initialUser, ['createdAt']);
         done();
       });
     });
@@ -55,7 +55,7 @@ describe('Database', () => {
     it('Update', (done) => {
       User.updateOne({ nickname: 'Initial User' }, updates, () => {
         User.findOne({ nickname: 'Updated User' }, (err1, foundUser) => {
-          compare(foundUser, new User(updates), false);
+          compare(foundUser, new User(updates), ['createdAt', '_id']);
           User.findOne({ nickname: 'Initial User' }, (err2, notFoundUser) => {
             expect(notFoundUser).to.be.null;
             done();
