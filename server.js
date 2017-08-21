@@ -1,6 +1,7 @@
 // ==================== MODULES ==========================
 const express = require('express');
 const app = express();
+const geoip = require('geoip-lite');
 const server = require('http').createServer(app);
 const serveIndex = require('serve-index');
 const io = require('socket.io').listen(server);
@@ -40,6 +41,12 @@ app.use('/logs', serveIndex('logs', { stylesheet: `${__dirname}/public/css/logs.
 
 // ==================== ROUTES ==========================
 
+// Retrieves origin of an IP
+const lookup = (ip) => {
+  const result = geoip.pretty(ip);
+  return result || 'Unknown';
+};
+
 // Initial (Connect or Reconnect)
 app.get(['/', '/enter.html'], (req, res) => {
   const userIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -65,7 +72,7 @@ app.get(['/', '/enter.html'], (req, res) => {
   }
   else {
     // Connect - Send entry page
-    Log.server({ action: 'Connect', agent: userIP });
+    Log.server(`Origin: ${lookup(userIP)}`, { action: 'Connect', agent: userIP });
     res.redirect('enter.html');
   }
 });
@@ -74,7 +81,7 @@ app.get(['/', '/enter.html'], (req, res) => {
 app.post('/enter.html', (req, res) => {
   const userIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   // Create new token with ip & nickname, sign with secret
-  jwt.sign({ nickname: req.body.nickname }, mongoConfig.prod.secret, (err, newToken) => {
+  jwt.sign({ nickname: req.body.nickname }, mongoConfig.prod.secret, { expiresIn: '8h' }, (err, newToken) => {
     new User({
       color: randomColor(),
       ip: userIP,
@@ -107,7 +114,6 @@ io.on('connection', (socket) => {
       Log.socket({ action: `Bind ${ip} => ${socket.nickname}` });
       io.emit('chat action', socket.nickname, 'joined');
     });
-    
   });
 
   socket.on('submit message', (msg) => {
@@ -121,8 +127,6 @@ io.on('connection', (socket) => {
       Log.socket({ action: 'Close Socket', agent: socket.nickname });
     });
   });
-
-  
 });
 
 // ==================== START APP ========================

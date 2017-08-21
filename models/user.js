@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const user = new mongoose.Schema({
   color: String,
+  createdAt: { type: Date, expires: 28800, default: Date.now },
   ip: String,
   nickname: String,
   state: String,
