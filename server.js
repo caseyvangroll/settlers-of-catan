@@ -46,7 +46,7 @@ app.use('/logs', serveIndex('logs', { stylesheet: `${__dirname}/public/css/logs.
 const lookup = (ip) => {
   const result = geoip.lookup(ip);
   return result ?
-    `${result.city}, ${countrynames.getName(result.country)}`
+    `${result.city}, ${result.region}, ${countrynames.getName(result.country)}`
     : 'Unknown';
 };
 
