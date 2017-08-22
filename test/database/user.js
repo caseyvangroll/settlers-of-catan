@@ -13,8 +13,6 @@ const compare = require('../modelComparator.js');
 
 // ==================== TEST DATA ==========================
 
-// TODO: update to reflect new user keys
-
 const initialUser = new User({
   color: '#330000',
   ip: '127.0.0.1',
@@ -33,7 +31,7 @@ const updates = {
 // ==================== TESTS ==========================
 
 describe('Database', () => {
-  describe('Standalone', () => {
+  describe('User', () => {
 
     // Connect to db if not connected
     before(done => mongoose.connect(mongoUri, { useMongoClient: true }, done()));

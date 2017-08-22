@@ -33,9 +33,10 @@ module.exports = (grunt) => {
 
     mochaTest: {
       options: {
+        clearRequireCache: true,
         gruntLogHeader: false,
         reporter: 'spec',
-        clearRequireCache: true,
+        timeout: 4000,
       },
       all: 'test/**/*.js',
       db: 'test/database/**/*.js',

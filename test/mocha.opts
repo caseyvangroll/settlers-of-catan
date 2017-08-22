@@ -1,4 +1,0 @@
---reporter spec
---require mocha-clean
---recursive
---timeout 4000
