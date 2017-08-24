@@ -3,6 +3,8 @@
 
 // Modules
 const request = require('supertest');
+const expect = require('chai').expect;
+const cookie = require('cookie');
 
 // Fields
 const baseUrl = 'http://localhost:3000';
@@ -15,11 +17,25 @@ const paths = [{ path: '/', result: 302 },
 // ==================== TESTS ==========================
 
 describe('Static', () => {
-  paths.forEach((path) => {
-    it(`GET [localhost:3000${path}]`, (done) => {
+  describe('Paths', () => {
+    paths.forEach((path) => {
+      it(`GET [localhost:3000${path}]`, (done) => {
+        request(baseUrl)
+          .get(path.path)
+          .expect(path.result, done);
+      });
+    });
+  });
+  describe('Cookie', () => {
+    it('POST [localhost:3000/enter.html]', (done) => {
       request(baseUrl)
-        .get(path.path)
-        .expect(path.result, done);
+        .post('/enter.html')
+        .field('nickname', 'Test User')
+        .end((err, res) => {
+          const cookies = cookie.parse(res.header['set-cookie'][0]);
+          expect(cookies.superEvilVirus).to.exist;
+          done();
+        });
     });
   });
 });
