@@ -56,6 +56,7 @@ app.get(['/', '/enter.html'], (req, res) => {
   const oldToken = req.cookies.superEvilVirus;
   if (oldToken) {
     // Reconnect - Use existing token
+    Log.debug('Using token from cookie.');
     User.findOne({ token: oldToken }, (err, found) => {
       if (found) {
         // Token found - update the existing user's state and ip

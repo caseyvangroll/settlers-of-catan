@@ -21,7 +21,7 @@ const logger = new (winston.Logger)({
       json: false,
       showLevel: false,
       colorize: true,
-      level: 'server',
+      level: 'debug',
       formatter: (options) => {
         const ts = options.timestamp();
         const action = options.meta.action ? `${options.meta.action} ` : '';
@@ -46,7 +46,7 @@ const logger = new (winston.Logger)({
     }),
   ],
   levels: { error: 0, game: 1, chat: 1, socket: 2, server: 2 },
-  colors: { error: 'red', game: 'magenta', chat: 'white', socket: 'cyan', server: 'green' },
+  colors: { error: 'red', game: 'magenta', chat: 'white', socket: 'cyan', server: 'green', debug: 'grey' },
 });
 
 module.exports = logger;

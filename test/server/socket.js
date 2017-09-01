@@ -44,9 +44,8 @@ describe('Socket', () => {
               expect(nickname, '[ Join message broadcasted ]').to.equal('Test User');
               client1.disconnect();
             }
-            else if (action === 'left') {
+            else if (nickname === 'Test User' && action === 'left') {
               expect(action, '[ Leave message broadcasted ]').to.equal('left');
-              client2.disconnect();
               done();
             }
             else {

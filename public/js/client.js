@@ -32,5 +32,21 @@ $(function () {
   socket.on('chat action', function (nickname, action) {
     $('#messages').append('<li class="join-message"><center>' + nickname + ' has ' + action + '</center></li>');
     $("div.chat-messages").animate({ scrollTop: $("div.chat-messages")[0].scrollHeight }, "fast");
-  });
+  });;
+  // Create the renderer
+  var renderer = PIXI.autoDetectRenderer(256, 256);
+
+  // Add the canvas to the HTML document
+  document.body.appendChild(renderer.view);
+
+  // Create a container object called the `stage`
+  var stage = new PIXI.Container();
+
+  // Tell the `renderer` to `render` the `stage`
+  renderer.render(stage);
+
+  renderer.view.style.position = 'absolute';
+  renderer.view.style.display = 'block';
+  renderer.autoResize = true;
+  renderer.resize(window.innerWidth, window.innerHeight);
 });
