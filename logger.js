@@ -45,7 +45,7 @@ const logger = new (winston.Logger)({
         return `${ts} ${meta} ${message}`; },
     }),
   ],
-  levels: { error: 0, game: 1, chat: 1, socket: 2, server: 2 },
+  levels: { error: 0, game: 1, chat: 1, socket: 2, server: 2, debug: 3 },
   colors: { error: 'red', game: 'magenta', chat: 'white', socket: 'cyan', server: 'green', debug: 'grey' },
 });
 
