@@ -34,6 +34,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const mongoConfig = require('./mongoConfig.js');
 const User = require('./models/user.js');
+const Message = require('./models/message.js');
 
 // ==================== STATIC FILES ==========================
 app.use(express.static('public'));
@@ -105,6 +106,11 @@ io.on('connection', (socket) => {
   Log.socket({ action: 'Open Socket', agent: ip });
   socket.nickname = ip;
 
+  // Echo all existing messages to user
+  Message.find({}, (err, found) => {
+    found.forEach(message => io.emit('broadcast message', message.nickname, message.color, message.body));
+  });
+
   socket.on('bind user', (cookies) => {
     const signedToken = cookie.parse(cookies).superEvilVirus;
     const decodedToken = jwt.verify(signedToken, mongoConfig.prod.secret);
@@ -122,11 +128,26 @@ io.on('connection', (socket) => {
 
   socket.on('submit message', (msg) => {
     Log.chat(`  ${socket.nickname}: ${msg}`);
+    // Broadcast to all users
     io.emit('broadcast message', socket.nickname, socket.color, msg);
+    // Save message to db
+    new Message({
+      body: msg,
+      color: socket.color,
+      nickname: socket.nickname,
+    }).save();
   });
 
   socket.on('disconnect', () => {
+    // Broadcast event
     io.emit('chat action', socket.nickname, 'left');
+    // If no one else is in room -> clear messages
+    if (io.engine.clientsCount === 0) {
+      Message.remove({}, () => {
+        Log.server('No clients connected -> Cleared chat history');
+      });
+    }
+    // Update user in db
     User.findOneAndUpdate({ token: socket.token }, { state: 'Disconnected.' }, () => {
       Log.socket({ action: 'Close Socket', agent: socket.nickname });
     });
