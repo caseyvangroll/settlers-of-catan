@@ -134,19 +134,19 @@ io.on('connection', (socket) => {
 });
 
 // ==================== START APP ========================
-if (process.argv.length > 2) {
-  if (process.argv.includes('test')) {
-    mongoose.connect(mongoConfig.test.uri, { useMongoClient: true });
-    Log.remove(winston.transports.Console); Log.remove(winston.transports.File);
-    if (fs.existsSync('logs/Build-Unknown.log')) { fs.unlink('logs/Build-Unknown.log'); }
-  }
-  else {
-    mongoose.connect(mongoConfig.prod.uri, { useMongoClient: true });
-    if (!fs.existsSync('logs')) {
-      fs.mkdirSync('logs');
-    }
+
+if (process.argv.includes('test')) {
+  mongoose.connect(mongoConfig.test.uri, { useMongoClient: true });
+  Log.remove(winston.transports.Console); Log.remove(winston.transports.File);
+  if (fs.existsSync('logs/Build-Unknown.log')) { fs.unlink('logs/Build-Unknown.log'); }
+}
+else {
+  mongoose.connect(mongoConfig.prod.uri, { useMongoClient: true });
+  if (!fs.existsSync('logs')) {
+    fs.mkdirSync('logs');
   }
 }
+
 
 server.listen(port, () => {
   Log.server({ action: 'Start', agent: `localhost:${port}` });
