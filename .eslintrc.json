@@ -1,12 +1,13 @@
 {
     "extends": "airbnb-base",
     "rules": {
+        "brace-style": 0,
         "import/newline-after-import": 0,
         "import/no-unresolved": 0,
         "max-len": 0,
         "linebreak-style": 0,
         "no-empty": 0,
         "no-param-reassign": 0,
-        "brace-style": 0
+        "padded-blocks": 0
     }
 }

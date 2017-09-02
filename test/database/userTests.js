@@ -2,18 +2,12 @@
 
 // ==================== SETUP ==========================
 const expect = require('chai').expect;
-const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
-
-const mongoConfig = require('../../mongoConfig.js');
-const mongoUri = mongoConfig.test.uri;
-const User = mongoConfig.models.User;
-
+const db = require('../../database.js')(['test']);
 const compare = require('../modelComparator.js');
 
 // ==================== TEST DATA ==========================
 
-const initialUser = new User({
+const initialUser = new db.User({
   color: '#330000',
   ip: '127.0.0.1',
   nickname: 'Initial User',
@@ -33,9 +27,6 @@ const updates = {
 describe('Database', () => {
   describe('User', () => {
 
-    // Connect to db if not connected
-    before(done => mongoose.connect(mongoUri, { useMongoClient: true }, done()));
-
     // Create Initial User
     it('Create', (done) => {
       initialUser.save(done);
@@ -43,7 +34,7 @@ describe('Database', () => {
 
     // Retrieve Initial User
     it('Retrieve', (done) => {
-      User.findOne({ nickname: 'Initial User' }, (error, foundUser) => {
+      db.User.findOne({ nickname: 'Initial User' }, (error, foundUser) => {
         compare(foundUser, initialUser, ['createdAt']);
         done();
       });
@@ -51,10 +42,10 @@ describe('Database', () => {
 
     // Update Initial User to Updated User
     it('Update', (done) => {
-      User.updateOne({ nickname: 'Initial User' }, updates, () => {
-        User.findOne({ nickname: 'Updated User' }, (err1, foundUser) => {
-          compare(foundUser, new User(updates), ['createdAt', '_id']);
-          User.findOne({ nickname: 'Initial User' }, (err2, notFoundUser) => {
+      db.User.updateOne({ nickname: 'Initial User' }, updates, () => {
+        db.User.findOne({ nickname: 'Updated User' }, (err1, foundUser) => {
+          compare(foundUser, new db.User(updates), ['createdAt', '_id']);
+          db.User.findOne({ nickname: 'Initial User' }, (err2, notFoundUser) => {
             expect(notFoundUser).to.be.null;
             done();
           });
@@ -63,15 +54,12 @@ describe('Database', () => {
     });
 
     it('Delete', (done) => {
-      User.deleteOne({ nickname: 'Updated User' }, () => {
-        User.findOne({ nickname: 'Updated User' }, (error, notFoundUser) => {
+      db.User.deleteOne({ nickname: 'Updated User' }, () => {
+        db.User.findOne({ nickname: 'Updated User' }, (error, notFoundUser) => {
           expect(notFoundUser).to.be.null;
           done(error);
         });
       });
     });
-
-    // Clear the collection
-    after(done => User.delete({}, done()));
   });
 });

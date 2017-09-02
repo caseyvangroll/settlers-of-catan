@@ -26,21 +26,21 @@ module.exports = (grunt) => {
         gruntLogHeader: false,
         stderr: false,
       },
-      start_dev: 'pm2 start server.js --name dev_server -- test > NUL', // force a happy exit code even if warned
-      start_prod: 'pm2 start production/server.js --name prod_server -- test > NUL',
-      stop: 'pm2 stop all > NUL || true',
+      start_dev: 'pm2 start server.js --name dev_server -- test', // force a happy exit code even if warned
+      start_prod: 'pm2 start production/server.js --name prod_server -- test',
+      stop: 'pm2 stop all || true',
     },
 
     mochaTest: {
       options: {
         clearRequireCache: true,
-        gruntLogHeader: false,
         reporter: 'spec',
         timeout: 4000,
       },
       all: 'test/**/*.js',
       db: 'test/database/**/*.js',
       server: 'test/server/**/*.js',
+      socket: 'test/socket/**/*.js',
     },
 
     watch: {

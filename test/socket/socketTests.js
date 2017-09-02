@@ -5,7 +5,7 @@
 const request = require('supertest');
 const io = require('socket.io-client');
 const expect = require('chai').expect;
-const cookie = require('cookie');
+const db = require('../../database.js')(['test']);
 
 // Fields
 const baseUrl = 'http://localhost:3000';
@@ -31,25 +31,23 @@ describe('Socket', () => {
       // Post to get cookie to allow binding Client 1 to usernmame
       request(baseUrl)
         .post('/enter.html')
-        .send({ nickname: 'Test User' })
+        .send({ nickname: 'Socket User' })
         .end((err, res) => {
           const cookies = res.header['set-cookie'][0];
-
           const client1 = io.connect(baseUrl, options);
           const client2 = io.connect(baseUrl, options);
     
           // Client 2 observes Client 1 joining and leaving game
           client2.on('chat action', (nickname, action) => {
             if (action === 'joined') {
-              expect(nickname, '[ Join message broadcasted ]').to.equal('Test User');
+              expect(nickname, '[ Join message broadcasted ]').to.equal('Socket User');
               client1.disconnect();
             }
-            else if (nickname === 'Test User' && action === 'left') {
+            // Have to specify, because tests below will also generate leave messages
+            else if (nickname === 'Socket User') {
               expect(action, '[ Leave message broadcasted ]').to.equal('left');
+              client2.disconnect();
               done();
-            }
-            else {
-              expect(true, `Unknown chat action: ${action}`).to.be.false;
             }
           });
 
@@ -84,15 +82,13 @@ describe('Socket', () => {
       });
     });
 
-
-
+    // // Clear the test data from db
+    after((done) => {
+      db.User.remove({}, () => {
+        db.ChatEvent.remove({}, () => {
+          done();
+        });
+      });
+    });
   });
-
-
-  
-  
-
-
-
-
 });
