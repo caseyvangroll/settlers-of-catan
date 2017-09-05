@@ -70,7 +70,6 @@ var resize = function resize() {
   renderer.view.style.left = parseInt(renderer.view.style.left.slice(0, -2)) + deltaX / 2 + 'px';
   renderer.view.style.top = parseInt(renderer.view.style.top.slice(0, -2)) + deltaY / 2 + 'px';
 };
-
 ;
 
 var Resource = function () {

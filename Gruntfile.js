@@ -26,6 +26,7 @@ module.exports = (grunt) => {
         gruntLogHeader: false,
         stderr: false,
       },
+      restart_dev: 'pm2 restart dev_server -- test', // force a happy exit code even if warned
       start_dev: 'pm2 start server.js --name dev_server -- test', // force a happy exit code even if warned
       start_prod: 'pm2 start production/server.js --name prod_server -- test',
       stop: 'pm2 stop all || true',
@@ -49,7 +50,7 @@ module.exports = (grunt) => {
         spawn: false,
       },
       files: prod.watch,
-      tasks: ['browserify'],
+      tasks: ['browserify', 'shell:restart_dev'],
     },
 
 

@@ -53,5 +53,3 @@ $(() => {
   renderer.render(stage);
 });
 
-
-
