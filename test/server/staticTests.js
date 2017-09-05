@@ -31,7 +31,7 @@ describe('Static', () => {
     it('POST [localhost:3000/enter.html]', (done) => {
       request(baseUrl)
         .post('/enter.html')
-        .send({ nickname: 'Static User' })
+        .send({ nickname: 'staticTests' })
         .end((err, res) => {
           const cookies = cookie.parse(res.header['set-cookie'][0]);
           expect(cookies.superEvilVirus).to.exist;
@@ -42,7 +42,7 @@ describe('Static', () => {
 
    // Clear the test data from db
   after((done) => {
-    db.User.remove({ nickname: 'Static User' }, () => {
+    db.User.remove({ nickname: 'staticTests' }, () => {
       done();
     });
   });

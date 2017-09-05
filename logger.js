@@ -16,7 +16,7 @@ const countrynames = require('countrynames');
 // 8/15 1:35:50 PM [   Connect  ] <66.249.65.124> Mountain View, CA, UNITED STATES
 // 8/15 1:35:50 PM [    Bind    ] <66.249.65.124> = Person 2
 // 8/15 1:35:50 PM - Person 2: Sup
-// 8/15 1:35:50 PM - Person 1: Finally, someone joined!
+// 8/15 1:35:50 PM - Person 1: Oh look, someone joined!
 // 8/15 1:35:50 PM [ Disconnect ] < Person 1 >
 
 // ==================== HELPERS ==========================

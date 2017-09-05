@@ -1,7 +1,7 @@
 'use strict';
 
 $(function () {
-  var socket = io();;
+  var socket = io();
   socket.emit('bind user', document.cookie);;
   $('div.chat-messages')[0].scrollTop = $('div.chat-messages')[0].scrollHeight;
 
@@ -32,32 +32,5 @@ $(function () {
   socket.on('chat action', function (nickname, action) {
     $('#messages').append('<li class="join-message"><center>' + nickname + ' has ' + action + '</center></li>');
     $("div.chat-messages").animate({ scrollTop: $("div.chat-messages")[0].scrollHeight }, "fast");
-  });;
-  // Create the renderer
-  var renderer = PIXI.autoDetectRenderer(256, 256);
-
-  // Add the canvas to the HTML document
-  document.body.appendChild(renderer.view);
-
-  // Create a container object called the `stage`
-  var stage = new PIXI.Container();
-
-  // Canvas takes up full window
-  renderer.view.style.position = 'absolute';
-  renderer.view.style.display = 'block';
-  renderer.autoResize = true;
-  renderer.resize(window.innerWidth, window.innerHeight);
-
-  // Styling
-  renderer.backgroundColor = '0xc0d8d4';
-
-  // Setup (Load sprites and render)
-  var setup = function setup() {
-    var flyingCat = new PIXI.Sprite(PIXI.loader.resources['img/flying-cat.png'].texture);
-    stage.addChild(flyingCat);
-    renderer.render(stage);
-  };
-
-  // Loader
-  PIXI.loader.add('img/flying-cat.png').load(setup);
+  });
 });

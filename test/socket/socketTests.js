@@ -31,7 +31,7 @@ describe('Socket', () => {
       // Post to get cookie to allow binding Client 1 to usernmame
       request(baseUrl)
         .post('/enter.html')
-        .send({ nickname: 'Socket User' })
+        .send({ nickname: 'socketTests' })
         .end((err, res) => {
           const cookies = res.header['set-cookie'][0];
           const client1 = io.connect(baseUrl, options);
@@ -40,11 +40,11 @@ describe('Socket', () => {
           // Client 2 observes Client 1 joining and leaving game
           client2.on('chat action', (nickname, action) => {
             if (action === 'joined') {
-              expect(nickname, '[ Join message broadcasted ]').to.equal('Socket User');
+              expect(nickname, '[ Join message broadcasted ]').to.equal('socketTests');
               client1.disconnect();
             }
             // Have to specify, because tests below will also generate leave messages
-            else if (nickname === 'Socket User') {
+            else if (nickname === 'socketTests') {
               expect(action, '[ Leave message broadcasted ]').to.equal('left');
               client2.disconnect();
               done();

@@ -5,7 +5,7 @@ const cookie = require('cookie');
 const socketio = require('socket.io');
 const jwt = require('jsonwebtoken');
 
-module.exports = (server, db, Log) => {
+module.exports = (server, db, Log, game) => {
   const io = socketio.listen(server);
   io.on('connection', (socket) => {
 
@@ -100,5 +100,10 @@ module.exports = (server, db, Log) => {
       db.User.findOneAndUpdate({ token: socket.token }, { state: 'Disconnected.' });
     });
 
+    // ==================== GAME ==========================
+
+    socket.on('request game', () => {
+      socket.send('send game', game);
+    });
   });
 };

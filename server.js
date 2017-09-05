@@ -8,6 +8,9 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 
+// Game object
+const game = require('./game/game.js');
+
 // Logging
 const Log = require('./logger')(process.argv);
 
@@ -15,7 +18,7 @@ const Log = require('./logger')(process.argv);
 const db = require('./database.js')(process.argv);
 
 // Launch sockets code
-require('./sockets.js')(server, db, Log);
+require('./sockets.js')(server, db, Log, game);
 
 // ================== CONFIGURATION =====================
 const port = 3000;
