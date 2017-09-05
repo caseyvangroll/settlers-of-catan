@@ -50,6 +50,27 @@ var dragContinue = function dragContinue(loc) {
 var dragEnd = function dragEnd() {
   stage.dragOrigin = null;
 };
+
+// Center the canvas on window
+var center = function center() {
+  var newLeft = (renderer.width - window.innerWidth) / 2;
+  var newTop = (renderer.height - window.height) / 2;
+  renderer.view.style.left = '-' + (renderer.width - window.innerWidth) / 2 + 'px';
+  renderer.view.style.top = '-' + (renderer.height - window.innerHeight) / 2 + 'px';
+};
+
+// Maintain focus on same area during resize
+var resize = function resize() {
+  var oldWidth = window.size.x;
+  var oldHeight = window.size.y;
+  window.size = { x: window.innerWidth, y: window.innerHeight };
+
+  var deltaX = window.size.x - oldWidth;
+  var deltaY = window.size.y - oldHeight;
+  renderer.view.style.left = parseInt(renderer.view.style.left.slice(0, -2)) + deltaX / 2 + 'px';
+  renderer.view.style.top = parseInt(renderer.view.style.top.slice(0, -2)) + deltaY / 2 + 'px';
+};
+
 ;
 
 var Resource = function () {
@@ -154,8 +175,10 @@ $(function () {
   renderer.view.style.height = screen.height * 2 + 'px';
 
   // Center with absolute positioning
-  renderer.view.style.left = '-' + screen.width / 2 + 'px';
-  renderer.view.style.top = '-' + screen.height / 2 + 'px';
+  center();
+
+  window.size = { x: window.innerWidth, y: window.innerHeight };
+  window.onresize = resize;
 
   renderer.render(stage);
 });

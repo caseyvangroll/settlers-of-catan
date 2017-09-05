@@ -40,3 +40,24 @@ const dragContinue = (loc) => {
 };
 
 const dragEnd = () => { stage.dragOrigin = null; };
+
+// Center the canvas on window
+const center = () => {
+  const newLeft = (renderer.width - window.innerWidth) / 2;
+  const newTop = (renderer.height - window.height) / 2;
+  renderer.view.style.left = `-${(renderer.width - window.innerWidth) / 2}px`;
+  renderer.view.style.top = `-${(renderer.height - window.innerHeight) / 2}px`;
+};
+
+// Maintain focus on same area during resize
+const resize = () => {
+  const oldWidth = window.size.x;
+  const oldHeight = window.size.y;
+  window.size = { x: window.innerWidth, y: window.innerHeight };
+
+  const deltaX = window.size.x - oldWidth;
+  const deltaY = window.size.y - oldHeight;
+  renderer.view.style.left = `${parseInt(renderer.view.style.left.slice(0, -2)) + (deltaX / 2)}px`;
+  renderer.view.style.top = `${parseInt(renderer.view.style.top.slice(0, -2)) + (deltaY / 2)}px`;
+};
+

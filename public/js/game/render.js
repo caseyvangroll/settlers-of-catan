@@ -45,8 +45,10 @@ $(() => {
   renderer.view.style.height = `${screen.height * 2}px`;
 
   // Center with absolute positioning
-  renderer.view.style.left = `-${screen.width / 2}px`;
-  renderer.view.style.top = `-${screen.height / 2}px`;
+  center();
+
+  window.size = { x: window.innerWidth, y: window.innerHeight };
+  window.onresize = resize;
 
   renderer.render(stage);
 });
