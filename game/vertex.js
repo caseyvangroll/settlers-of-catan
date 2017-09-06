@@ -2,34 +2,22 @@ class Vertex {
   constructor(id) {
     this.id = id;
     this.resources = [];
-    this.edges = [];
+    this.vertices = [];
   }
-  addEdge(vertex) {
-    if (!this.edges.find(v => v.id === vertex.id)) {
-      this.edges.push(vertex);
+  addEdge(vertexID) {
+    if (!this.vertices.includes(vertexID)) {
+      this.vertices.push(vertexID);
     }
   }
 
-  addResource(resource) {
-    if (!this.resources.find(r => r.id === resource.id)) {
-      this.resources.push(resource);
+  addResource(resourceID) {
+    if (!this.resources.includes(resourceID)) {
+      this.resources.push(resourceID);
     }
   }
 
   toString() {
-    let edges = '< ';
-    for (let i = 0; i < this.edges.length; i += 1) {
-      edges += `${this.edges[i].id} `;
-    }
-    edges += '>';
-
-    let resources = '< ';
-    for (let i = 0; i < this.resources.length; i += 1) {
-      resources += `${this.resources[i].id} `;
-    }
-    resources += '>';
-
-    return `${this.id} ${edges} ${resources}`;
+    return `Vertex ${this.id}: Connected to [${this.vertices}], Borders [${this.resources}]`;
   }
 }
 

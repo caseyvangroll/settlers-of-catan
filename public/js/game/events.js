@@ -21,3 +21,17 @@ const clickVertex = (vertexID) => {
   socket.emit('vertex', vertexID);
   renderer.render(stage);
 };
+
+socket.on('highlight vertex', (ids) => {
+  ids.forEach((id) => {
+    vertices[id].highlight(true);
+  });
+  renderer.render(stage);
+});
+
+socket.on('highlight resource', (ids) => {
+  ids.forEach((id) => {
+    resources[id].highlight(true);
+  });
+  renderer.render(stage);
+});

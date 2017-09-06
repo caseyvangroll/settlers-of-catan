@@ -59,7 +59,8 @@ const mapLocs = (edgeLength) => {
 };
 
 const dragBegin = (loc) => {
-  console.log(loc);
+  clearSelections();
+  renderer.render(stage);
   stage.prevLeft = parseInt(renderer.view.style.left.slice(0, -2));
   stage.prevTop = parseInt(renderer.view.style.top.slice(0, -2));
   stage.dragOrigin = { x: loc.data.originalEvent.clientX, y: loc.data.originalEvent.clientY };

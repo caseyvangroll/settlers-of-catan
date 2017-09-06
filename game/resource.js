@@ -4,20 +4,14 @@ class Resource {
     this.vertices = [];
   }
 
-  addVertex(vertex) {
-    if (!this.vertices.find(v => v.id === vertex.id)) {
-      this.vertices.push(vertex);
+  addVertex(vertexID) {
+    if (!this.vertices.includes(vertexID)) {
+      this.vertices.push(vertexID);
     }
   }
 
   toString() {
-    let vertices = '< ';
-    for (let i = 0; i < this.vertices.length; i += 1) {
-      vertices += `${this.vertices[i].id} `;
-    }
-    vertices += '>';
-
-    return `${this.id} ${vertices}`;
+    return `Resource ${this.id}: Surrounded by [${this.vertices}]`;
   }
 }
 

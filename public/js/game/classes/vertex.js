@@ -3,14 +3,14 @@ class Vertex {
     this.id = id;
   }
   highlight(toggle) {
-    if (toggle) { this.sprite.tint = 0Xffc6c6; }
+    if (toggle) { this.sprite.tint = 0X81abef; }
     else { this.sprite.tint = 0X00FFFFFF; }
   }
   place(x, y) {
     this.sprite.position.set(x, y);
   }
   select(toggle) {
-    if (toggle) { this.sprite.tint = 0Xff0000; }
+    if (toggle) { this.sprite.tint = 0X3123ed; }
     else { this.sprite.tint = 0X00FFFFFF; }
   }
   setEdgeLength(edgeLength) {

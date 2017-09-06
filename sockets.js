@@ -102,8 +102,13 @@ module.exports = (server, db, Log, game) => {
 
     // ==================== GAME ==========================
 
-    socket.on('request game', () => {
-      socket.send('send game', game);
+    socket.on('resource', (id) => {
+      socket.emit('highlight vertex', game.resources[id].vertices);
+    });
+
+    socket.on('vertex', (id) => {
+      socket.emit('highlight resource', game.vertices[id].resources);
+      socket.emit('highlight vertex', game.vertices[id].vertices);
     });
   });
 };

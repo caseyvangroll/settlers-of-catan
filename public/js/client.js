@@ -70,7 +70,7 @@ $(function () {
       key: 'highlight',
       value: function highlight(toggle) {
         if (toggle) {
-          this.sprite.tint = 0Xffc6c6;
+          this.sprite.tint = 0Xf47777;
         } else {
           this.sprite.tint = 0X00FFFFFF;
         }
@@ -127,7 +127,7 @@ $(function () {
       key: 'highlight',
       value: function highlight(toggle) {
         if (toggle) {
-          this.sprite.tint = 0Xffc6c6;
+          this.sprite.tint = 0X81abef;
         } else {
           this.sprite.tint = 0X00FFFFFF;
         }
@@ -141,7 +141,7 @@ $(function () {
       key: 'select',
       value: function select(toggle) {
         if (toggle) {
-          this.sprite.tint = 0Xff0000;
+          this.sprite.tint = 0X3123ed;
         } else {
           this.sprite.tint = 0X00FFFFFF;
         }
@@ -226,7 +226,8 @@ $(function () {
   };
 
   var dragBegin = function dragBegin(loc) {
-    console.log(loc);
+    clearSelections();
+    renderer.render(stage);
     stage.prevLeft = parseInt(renderer.view.style.left.slice(0, -2));
     stage.prevTop = parseInt(renderer.view.style.top.slice(0, -2));
     stage.dragOrigin = { x: loc.data.originalEvent.clientX, y: loc.data.originalEvent.clientY };
@@ -290,6 +291,20 @@ $(function () {
     socket.emit('vertex', vertexID);
     renderer.render(stage);
   };
+
+  socket.on('highlight vertex', function (ids) {
+    ids.forEach(function (id) {
+      vertices[id].highlight(true);
+    });
+    renderer.render(stage);
+  });
+
+  socket.on('highlight resource', function (ids) {
+    ids.forEach(function (id) {
+      resources[id].highlight(true);
+    });
+    renderer.render(stage);
+  });
   ;
   // Canvas/Screen/Window Sizing
   var ratio = window.devicePixelRatio || 1;

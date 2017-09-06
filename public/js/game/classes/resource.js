@@ -3,7 +3,7 @@ class Resource {
     this.id = id;
   }
   highlight(toggle) {
-    if (toggle) { this.sprite.tint = 0Xffc6c6; }
+    if (toggle) { this.sprite.tint = 0Xf47777; }
     else { this.sprite.tint = 0X00FFFFFF; }
   }
   place(x, y) {
