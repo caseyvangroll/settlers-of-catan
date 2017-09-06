@@ -1,8 +1,12 @@
 /* eslint-disable no-undef, one-var, no-multiple-empty-lines, no-plusplus, no-unused-vars */
 
-const getCenter = () => new PIXI.Point(renderer.width / 2, renderer.height / 2);
+const getCenter = () => new PIXI.Point(gameWidth / 2, gameHeight / 2);
 
-const getSuggestedEdgeLength = () => Math.min((screen.width * 0.7) / (5 * Math.sqrt(3)), (screen.height * 0.7) / 8);
+const getSuggestedEdgeLength = () => {
+  return (screenHeight > screenWidth) ? // indicates mobile
+    (screenWidth / (5 * Math.sqrt(3))) * 1.5 :
+    Math.min((screenWidth * 0.75) / (5 * Math.sqrt(3)), (screenHeight * 0.75) / 8);
+};
 
 const mapLocs = (edgeLength) => {
   const center = getCenter();
@@ -44,17 +48,17 @@ const dragEnd = () => { stage.dragOrigin = null; };
 
 // Center the canvas on window
 const center = () => {
-  const newLeft = (renderer.width - window.innerWidth) / 2;
-  const newTop = (renderer.height - window.height) / 2;
-  renderer.view.style.left = `-${(renderer.width - window.innerWidth) / 2}px`;
-  renderer.view.style.top = `-${(renderer.height - window.innerHeight) / 2}px`;
+  const newLeft = (gameWidth - windowWidth()) / 2;
+  const newTop = (gameHeight - windowHeight()) / 2;
+  renderer.view.style.left = `-${(gameWidth - windowWidth()) / 2}px`;
+  renderer.view.style.top = `-${(gameHeight - windowHeight()) / 2}px`;
 };
 
 // Maintain focus on same area during resize
 const resize = () => {
   const oldWidth = window.size.x;
   const oldHeight = window.size.y;
-  window.size = { x: window.innerWidth, y: window.innerHeight };
+  window.size = { x: windowWidth(), y: windowHeight() };
 
   const deltaX = window.size.x - oldWidth;
   const deltaY = window.size.y - oldHeight;

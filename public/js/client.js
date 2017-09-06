@@ -96,7 +96,7 @@ $(function () {
 
         this.sprite = sprite;
         this.sprite.interactive = true;
-        this.sprite.on('mousedown', function () {
+        this.sprite.on('pointerdown', function () {
           clickResource(_this.id);
         });
       }
@@ -115,11 +115,12 @@ $(function () {
 
   ;
   var getCenter = function getCenter() {
-    return new PIXI.Point(renderer.width / 2, renderer.height / 2);
+    return new PIXI.Point(gameWidth / 2, gameHeight / 2);
   };
 
   var getSuggestedEdgeLength = function getSuggestedEdgeLength() {
-    return Math.min(screen.width * 0.7 / (5 * Math.sqrt(3)), screen.height * 0.7 / 8);
+    return screenHeight > screenWidth ? // indicates mobile
+    screenWidth / (5 * Math.sqrt(3)) * 1.5 : Math.min(screenWidth * 0.75 / (5 * Math.sqrt(3)), screenHeight * 0.75 / 8);
   };
 
   var mapLocs = function mapLocs(edgeLength) {
@@ -164,17 +165,17 @@ $(function () {
 
   // Center the canvas on window
   var center = function center() {
-    var newLeft = (renderer.width - window.innerWidth) / 2;
-    var newTop = (renderer.height - window.height) / 2;
-    renderer.view.style.left = '-' + (renderer.width - window.innerWidth) / 2 + 'px';
-    renderer.view.style.top = '-' + (renderer.height - window.innerHeight) / 2 + 'px';
+    var newLeft = (gameWidth - windowWidth()) / 2;
+    var newTop = (gameHeight - windowHeight()) / 2;
+    renderer.view.style.left = '-' + (gameWidth - windowWidth()) / 2 + 'px';
+    renderer.view.style.top = '-' + (gameHeight - windowHeight()) / 2 + 'px';
   };
 
   // Maintain focus on same area during resize
   var resize = function resize() {
     var oldWidth = window.size.x;
     var oldHeight = window.size.y;
-    window.size = { x: window.innerWidth, y: window.innerHeight };
+    window.size = { x: windowWidth(), y: windowHeight() };
 
     var deltaX = window.size.x - oldWidth;
     var deltaY = window.size.y - oldHeight;
@@ -190,21 +191,33 @@ $(function () {
     socket.emit('resource', resourceID);
     renderer.render(stage);
   };;
-  var renderer = PIXI.autoDetectRenderer(screen.width * 2, screen.height * 2, { view: $('canvas')[0] }, false);
+  var ratio = window.devicePixelRatio || 1;
+  var screenWidth = screen.width * ratio;
+  var screenHeight = screen.height * ratio;
+  var windowWidth = function windowWidth() {
+    return window.innerWidth * ratio;
+  };
+  var windowHeight = function windowHeight() {
+    return window.innerHeight * ratio;
+  };
+  var gameWidth = screenWidth * 2;
+  var gameHeight = screenHeight * 2;
+
+  var renderer = PIXI.autoDetectRenderer(gameWidth, gameHeight, { view: $('canvas')[0] }, false);
   var stage = new PIXI.Container();
 
   var game = new Game();
   var resources = game.resources;
 
   // Canvas twice as large as screen
-  renderer.view.style.width = screen.width * 2 + 'px';
-  renderer.view.style.height = screen.height * 2 + 'px';
+  renderer.view.style.width = gameWidth + 'px';
+  renderer.view.style.height = gameHeight + 'px';
 
   // Set up canvas css-driven dragging
-  renderer.view.onmousedown = dragBegin;
-  renderer.view.onmousemove = dragContinue;
-  renderer.view.onmouseup = dragEnd;
-  renderer.view.onmouseout = dragEnd;
+  renderer.view.onpointerdown = dragBegin;
+  renderer.view.onpointermove = dragContinue;
+  renderer.view.onpointerup = dragEnd;
+  renderer.view.onpointerout = dragEnd;
 
   // Center with absolute positioning
   center();

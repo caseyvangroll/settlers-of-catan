@@ -26,6 +26,6 @@ class Resource {
   setSprite(sprite) {
     this.sprite = sprite;
     this.sprite.interactive = true;
-    this.sprite.on('mousedown', () => { clickResource(this.id); });
+    this.sprite.on('pointerdown', () => { clickResource(this.id); });
   }
 }
