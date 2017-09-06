@@ -4,7 +4,8 @@ const getCenter = () => new PIXI.Point(renderer.width / 2, renderer.height / 2);
 
 const getSuggestedEdgeLength = () => Math.min((screen.width * 0.7) / (5 * Math.sqrt(3)), (screen.height * 0.7) / 8);
 
-const mapLocs = (resources, center, edgeLength) => {
+const mapLocs = (edgeLength) => {
+  const center = getCenter();
   const vertShift = Math.sqrt(3) * edgeLength;
   const horShift = 1.5 * edgeLength;
   // Start at A
@@ -14,7 +15,7 @@ const mapLocs = (resources, center, edgeLength) => {
     currentLoc.y = center.y - (((height - 1) / 2) * vertShift);
 
     for (let j = 0; j < height; j++) {
-      resources[i++].place(currentLoc.x, currentLoc.y);
+      resources[resources.ids[i++]].place(currentLoc.x, currentLoc.y);
       currentLoc.y += vertShift;
     }
 

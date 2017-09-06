@@ -3,7 +3,7 @@
 const prod = {
   dir: 'production/',
   html: ['public/**/*.html'],
-  js: ['*.js', 'models/**/*.js', 'game/**/*.js', 'public/js/client.js', 'public/js/game.js', '!**/test/**', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
+  js: ['*.js', 'models/**/*.js', 'game/**/*.js', 'public/js/client.js', '!**/test/**', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
   misc: ['package.json', 'public/**/*', '!.*', '!**/*.js', '!**/*.html', '!public/js/**', '!**/?(logs|node_modules|production|test)/**'],
   watch: ['public/js/**/*.js'],
 };
@@ -64,10 +64,6 @@ module.exports = (grunt) => {
         src: 'public/js/client.js',
         dest: 'public/js/client.js',
       },
-      game: {
-        src: 'public/js/game.js',
-        dest: 'public/js/game.js',
-      },
     },
 
     uglify: {
@@ -99,21 +95,23 @@ module.exports = (grunt) => {
 
     concat: {
       options: {
+        // Place all client code inside document.ready to avoid global variables
+        banner: '$(() => {',
+        footer: '});',
         gruntLogHeader: false,
         separator: ';\n',
         stripBanners: true,
       },
       client: {
-        options: {
-          banner: '$(() => {\n',
-          footer: '});\n',
-        },
-        src: ['public/js/client/register.js', 'public/js/client/*.js'],
+        src: [
+          'public/js/common.js',
+          'public/js/chat/*.js',
+          'public/js/game/classes/*.js',
+          'public/js/game/helpers.js',
+          'public/js/game/events.js',
+          'public/js/game/render.js',
+        ],
         dest: 'public/js/client.js',
-      },
-      game: {
-        src: ['public/js/game/helpers.js', 'public/js/game/classes/*.js', 'public/js/game/*.js'],
-        dest: 'public/js/game.js',
       },
     },
 
@@ -172,8 +170,7 @@ module.exports = (grunt) => {
   // Merge all js files in public/js into one client.js file, then transpile to es5
   grunt.registerTask('browserify', (env = 'dev') => {
     if (env === 'dev') {
-      grunt.task.run('concat:client', 'babel:client',
-                     'concat:game', 'babel:game');
+      grunt.task.run('concat:client', 'babel:client');
     }
   });
 
