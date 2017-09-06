@@ -81,6 +81,15 @@ $(function () {
         this.sprite.position.set(x, y);
       }
     }, {
+      key: 'select',
+      value: function select(toggle) {
+        if (toggle) {
+          this.sprite.tint = 0Xff0000;
+        } else {
+          this.sprite.tint = 0X00FFFFFF;
+        }
+      }
+    }, {
       key: 'setEdgeLength',
       value: function setEdgeLength(edgeLength) {
         this.sprite.width = 2 * edgeLength;
@@ -107,11 +116,60 @@ $(function () {
 
   ;
 
-  var Vertex = function Vertex(id) {
-    _classCallCheck(this, Vertex);
+  var Vertex = function () {
+    function Vertex(id) {
+      _classCallCheck(this, Vertex);
 
-    this.id = id;
-  };
+      this.id = id;
+    }
+
+    _createClass(Vertex, [{
+      key: 'highlight',
+      value: function highlight(toggle) {
+        if (toggle) {
+          this.sprite.tint = 0Xffc6c6;
+        } else {
+          this.sprite.tint = 0X00FFFFFF;
+        }
+      }
+    }, {
+      key: 'place',
+      value: function place(x, y) {
+        this.sprite.position.set(x, y);
+      }
+    }, {
+      key: 'select',
+      value: function select(toggle) {
+        if (toggle) {
+          this.sprite.tint = 0Xff0000;
+        } else {
+          this.sprite.tint = 0X00FFFFFF;
+        }
+      }
+    }, {
+      key: 'setEdgeLength',
+      value: function setEdgeLength(edgeLength) {
+        this.sprite.width = edgeLength / 3;
+        this.sprite.height = edgeLength / 3;
+        this.sprite.anchor.set(0.5);
+        // Redefine hit area - i don't understand why all of this needs to be double what i calculated
+        this.sprite.hitArea = new PIXI.Circle(0, 0, edgeLength / 3);
+      }
+    }, {
+      key: 'setSprite',
+      value: function setSprite(sprite) {
+        var _this2 = this;
+
+        this.sprite = sprite;
+        this.sprite.interactive = true;
+        this.sprite.on('pointerdown', function () {
+          clickVertex(_this2.id);
+        });
+      }
+    }]);
+
+    return Vertex;
+  }();
 
   ;
   var getCenter = function getCenter() {
@@ -123,35 +181,61 @@ $(function () {
     screenWidth / (5 * Math.sqrt(3)) * 1.5 : Math.min(screenWidth * 0.75 / (5 * Math.sqrt(3)), screenHeight * 0.75 / 8);
   };
 
+  // Maps all locations for resources/vertices based on edge-length of one side of hexagon
   var mapLocs = function mapLocs(edgeLength) {
     var center = getCenter();
-    var vertShift = Math.sqrt(3) * edgeLength;
-    var horShift = 1.5 * edgeLength;
-    // Start at A
-    var currentLoc = new PIXI.Point(center.x - 2 * horShift, center.y - vertShift);
+
+    // Map resource locations
+    var resourceYShift = Math.sqrt(3) * edgeLength;
+    var resourceXShift = 1.5 * edgeLength;
+    var currentLoc = new PIXI.Point(center.x - 2 * resourceXShift, center.y - resourceYShift); // Start at A
     var i = 0;
     [3, 4, 5, 4, 3].forEach(function (height) {
-      currentLoc.y = center.y - (height - 1) / 2 * vertShift;
+      currentLoc.y = center.y - (height - 1) / 2 * resourceYShift;
 
       for (var j = 0; j < height; j++) {
         resources[resources.ids[i++]].place(currentLoc.x, currentLoc.y);
-        currentLoc.y += vertShift;
+        currentLoc.y += resourceYShift;
       }
 
-      currentLoc.x += horShift;
+      currentLoc.x += resourceXShift;
+    });
+
+    // Map vertex locations
+    var vertexYShift = Math.sqrt(3) * edgeLength / 2;
+    var vertexXShift = edgeLength / 2;
+    i = 0;
+    // The top resource of each trickle-down
+    [{ resource: 'A', height: 7 }, { resource: 'D', height: 9 }, { resource: 'H', height: 11 }, { resource: 'H', height: 11, backwards: true }, { resource: 'M', height: 9, backwards: true }, { resource: 'Q', height: 7, backwards: true }].forEach(function (config) {
+      var topResource = resources[config.resource].sprite;
+
+      // Start at top resource
+      if (config.backwards) {
+        currentLoc.set(topResource.x + vertexXShift, topResource.y - vertexYShift);
+      } else {
+        currentLoc.set(topResource.x - vertexXShift, topResource.y - vertexYShift);
+      }
+      var xShiftSign = config.backwards ? 1 : -1;
+      for (var j = 0; j < config.height; j++) {
+        vertices[vertices.ids[i++]].place(currentLoc.x, currentLoc.y);
+        currentLoc.y += vertexYShift;
+        currentLoc.x += vertexXShift * xShiftSign;
+        xShiftSign *= -1;
+      }
     });
   };
 
   var dragBegin = function dragBegin(loc) {
+    console.log(loc);
     stage.prevLeft = parseInt(renderer.view.style.left.slice(0, -2));
     stage.prevTop = parseInt(renderer.view.style.top.slice(0, -2));
-    stage.dragOrigin = { x: loc.screenX, y: loc.screenY };
+    stage.dragOrigin = { x: loc.data.originalEvent.clientX, y: loc.data.originalEvent.clientY };
   };
 
   var dragContinue = function dragContinue(loc) {
     if (stage.dragOrigin) {
-      var newLeft = Math.min(0, stage.prevLeft + (loc.screenX - stage.dragOrigin.x));
-      var newTop = Math.min(0, stage.prevTop + (loc.screenY - stage.dragOrigin.y));
+      var newLeft = Math.min(0, stage.prevLeft + (loc.data.originalEvent.clientX - stage.dragOrigin.x));
+      var newTop = Math.min(0, stage.prevTop + (loc.data.originalEvent.clientY - stage.dragOrigin.y));
       newLeft = Math.max(newLeft, -parseInt(renderer.view.style.width.slice(0, -2)) / 2);
       newTop = Math.max(newTop, -parseInt(renderer.view.style.height.slice(0, -2)) / 2);
       renderer.view.style.left = newLeft + 'px';
@@ -184,13 +268,30 @@ $(function () {
   };
   ;
 
-  var clickResource = function clickResource(resourceID) {
+  var clearSelections = function clearSelections() {
     resources.ids.forEach(function (id) {
-      resources[id].highlight(id === resourceID);
+      resources[id].select(false);
     });
+    vertices.ids.forEach(function (id) {
+      vertices[id].select(false);
+    });
+  };
+
+  var clickResource = function clickResource(resourceID) {
+    clearSelections();
+    resources[resourceID].select(true);
     socket.emit('resource', resourceID);
     renderer.render(stage);
-  };;
+  };
+
+  var clickVertex = function clickVertex(vertexID) {
+    clearSelections();
+    vertices[vertexID].select(true);
+    socket.emit('vertex', vertexID);
+    renderer.render(stage);
+  };
+  ;
+  // Canvas/Screen/Window Sizing
   var ratio = window.devicePixelRatio || 1;
   var screenWidth = screen.width * ratio;
   var screenHeight = screen.height * ratio;
@@ -203,29 +304,37 @@ $(function () {
   var gameWidth = screenWidth * 2;
   var gameHeight = screenHeight * 2;
 
+  // PIXI objects
   var renderer = PIXI.autoDetectRenderer(gameWidth, gameHeight, { view: $('canvas')[0] }, false);
   var stage = new PIXI.Container();
+  var backdrop = new PIXI.Container();
+  backdrop.interactive = true;
+  backdrop.hitArea = new PIXI.Rectangle(0, 0, gameWidth, gameHeight);
+  // Set up css-driven dragging
+  backdrop.on('pointerdown', dragBegin);
+  backdrop.on('pointermove', dragContinue);
+  backdrop.on('pointerup', dragEnd);
+  backdrop.on('pointerout', dragEnd);
 
+  // Game Objects
   var game = new Game();
   var resources = game.resources;
+  var vertices = game.vertices;
 
   // Canvas twice as large as screen
   renderer.view.style.width = gameWidth + 'px';
   renderer.view.style.height = gameHeight + 'px';
-
-  // Set up canvas css-driven dragging
-  renderer.view.onpointerdown = dragBegin;
-  renderer.view.onpointermove = dragContinue;
-  renderer.view.onpointerup = dragEnd;
-  renderer.view.onpointerout = dragEnd;
-
-  // Center with absolute positioning
-  center();
-
   window.size = { x: window.innerWidth, y: window.innerHeight };
   window.onresize = resize;
+  center();
+
+  // renderer.view.onpointerdown = dragBegin;
+  // renderer.view.onpointermove = dragContinue;
+  // renderer.view.onpointerup = dragEnd;
+  // renderer.view.onpointerout = dragEnd;
 
   var setup = function setup() {
+    stage.addChild(backdrop);
     var edgeLength = getSuggestedEdgeLength();
 
     resources.ids.forEach(function (id) {
@@ -234,11 +343,15 @@ $(function () {
       stage.addChild(resources[id].sprite);
     });
 
+    vertices.ids.forEach(function (id) {
+      vertices[id].setSprite(new PIXI.Sprite(PIXI.loader.resources['img/vertex.png'].texture));
+      vertices[id].setEdgeLength(edgeLength);
+      stage.addChild(vertices[id].sprite);
+    });
+
     mapLocs(edgeLength);
     renderer.render(stage);
   };
 
-  PIXI.loader.add('img/resource.png').on('progress', function (loader, resource) {
-    console.log('Loading ' + resource.url + ' [' + loader.progress + '%]');
-  }).load(setup);
+  PIXI.loader.add('img/resource.png').add('img/vertex.png').load(setup);
 });

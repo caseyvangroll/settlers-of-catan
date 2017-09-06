@@ -9,6 +9,10 @@ class Resource {
   place(x, y) {
     this.sprite.position.set(x, y);
   }
+  select(toggle) {
+    if (toggle) { this.sprite.tint = 0Xff0000; }
+    else { this.sprite.tint = 0X00FFFFFF; }
+  }
   setEdgeLength(edgeLength) {
     this.sprite.width = 2 * edgeLength;
     this.sprite.height = Math.sqrt(3) * edgeLength;
