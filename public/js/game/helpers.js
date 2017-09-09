@@ -1,4 +1,3 @@
-/* eslint-disable no-undef, one-var, no-multiple-empty-lines, no-plusplus, no-unused-vars */
 
 const getCenter = () => new PIXI.Point(gameWidth / 2, gameHeight / 2);
 
@@ -81,8 +80,6 @@ const dragEnd = () => { stage.dragOrigin = null; };
 
 // Center the canvas on window
 const center = () => {
-  const newLeft = (gameWidth - windowWidth()) / 2;
-  const newTop = (gameHeight - windowHeight()) / 2;
   renderer.view.style.left = `-${(gameWidth - windowWidth()) / 2}px`;
   renderer.view.style.top = `-${(gameHeight - windowHeight()) / 2}px`;
 };

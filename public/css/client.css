@@ -10,7 +10,6 @@ body {
 canvas {
 	position: absolute;
 	display: block;
-	background-color: #000000;
 }
 
 .chat-overlay {
@@ -107,15 +106,3 @@ textarea:focus,
 button:focus {
     outline: none;
 }
-
-
-
-/* removed
-button.chat-form {
-	vertical-align: middle;
-	background: url('http://gravitypond.com/img/send-button.png');
-	background-size: 100% 100%;
-	height:28px;
-	width:28px;
-}
-*/

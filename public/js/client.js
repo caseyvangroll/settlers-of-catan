@@ -172,6 +172,7 @@ $(function () {
   }();
 
   ;
+
   var getCenter = function getCenter() {
     return new PIXI.Point(gameWidth / 2, gameHeight / 2);
   };
@@ -250,8 +251,6 @@ $(function () {
 
   // Center the canvas on window
   var center = function center() {
-    var newLeft = (gameWidth - windowWidth()) / 2;
-    var newTop = (gameHeight - windowHeight()) / 2;
     renderer.view.style.left = '-' + (gameWidth - windowWidth()) / 2 + 'px';
     renderer.view.style.top = '-' + (gameHeight - windowHeight()) / 2 + 'px';
   };
@@ -306,6 +305,7 @@ $(function () {
     renderer.render(stage);
   });
   ;
+
   // Canvas/Screen/Window Sizing
   var ratio = window.devicePixelRatio || 1;
   var screenWidth = screen.width * ratio;
@@ -321,15 +321,52 @@ $(function () {
 
   // PIXI objects
   var renderer = PIXI.autoDetectRenderer(gameWidth, gameHeight, { view: $('canvas')[0] }, false);
+  renderer.backgroundColor = 0Xc4daff;
   var stage = new PIXI.Container();
+
+  // Make backdrop - used for dragging to entire canvas
   var backdrop = new PIXI.Container();
   backdrop.interactive = true;
   backdrop.hitArea = new PIXI.Rectangle(0, 0, gameWidth, gameHeight);
-  // Set up css-driven dragging
   backdrop.on('pointerdown', dragBegin);
   backdrop.on('pointermove', dragContinue);
   backdrop.on('pointerup', dragEnd);
   backdrop.on('pointerout', dragEnd);
+
+  // Make frontdrop - used for masking to disable interacting with game
+  var frontdrop = new PIXI.Container();
+  frontdrop.interactive = true;
+  frontdrop.hitArea = new PIXI.Rectangle(0, 0, gameWidth, gameHeight);
+
+  // Make ticker for smooth visual transition to paused state
+  var pauseTicker = new PIXI.ticker.Ticker();
+  pauseTicker.autoStart = false;
+
+  var blurFilter = new PIXI.filters.BlurFilter();
+  blurFilter.blur = 5;
+  var MAX_BLUR = 5;
+  var deltaBlur = 1;
+
+  pauseTicker.add(function () {
+    blurFilter.blur += deltaBlur;
+    renderer.render(stage);
+
+    if (blurFilter.blur >= MAX_BLUR) {
+      frontdrop.interactive = true;
+      pauseTicker.stop();
+    } else if (blurFilter.blur <= 0) {
+      frontdrop.interactive = false;
+      blurFilter.blur = 0;
+      pauseTicker.stop();
+    }
+  });
+
+  stage.filters = [blurFilter];
+
+  frontdrop.on('pointerdown', function () {
+    deltaBlur *= -1;
+    pauseTicker.start();
+  });
 
   // Game Objects
   var game = new Game();
@@ -343,13 +380,9 @@ $(function () {
   window.onresize = resize;
   center();
 
-  // renderer.view.onpointerdown = dragBegin;
-  // renderer.view.onpointermove = dragContinue;
-  // renderer.view.onpointerup = dragEnd;
-  // renderer.view.onpointerout = dragEnd;
-
   var setup = function setup() {
     stage.addChild(backdrop);
+
     var edgeLength = getSuggestedEdgeLength();
 
     resources.ids.forEach(function (id) {
@@ -362,6 +395,8 @@ $(function () {
       vertices[id].setSprite(new PIXI.Sprite(PIXI.loader.resources['img/vertex.png'].texture));
       vertices[id].setEdgeLength(edgeLength);
       stage.addChild(vertices[id].sprite);
+
+      stage.addChild(frontdrop);
     });
 
     mapLocs(edgeLength);
