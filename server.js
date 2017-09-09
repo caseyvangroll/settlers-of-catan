@@ -72,7 +72,7 @@ app.get(['/', '/enter.html'], (req, res) => {
   }
   else {
     // Connect - Send entry page
-    Log.server({ action: 'connect', agent: userIP });
+    Log.game({ action: 'connect', agent: userIP });
     res.redirect('enter.html');
   }
 });

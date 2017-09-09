@@ -41,7 +41,7 @@ module.exports = (server, db, Log, game) => {
           socket.state = found.state;
           socket.token = found.token;
 
-          Log.server(socket.nickname, { action: 'bind', agent: ip });
+          Log.game(socket.nickname, { action: 'bind', agent: ip });
           io.emit('chat action', socket.nickname, 'joined');
           new db.ChatEvent({
             body: 'joined',
@@ -78,12 +78,12 @@ module.exports = (server, db, Log, game) => {
 // ==================== DISCONNECT ==========================
 
     socket.on('disconnect', () => {
-      Log.server({ action: 'disconnect', agent: socket.nickname });
+      Log.game({ action: 'disconnect', agent: socket.nickname });
 
       // If no one else is in room -> clear messages
       if (io.engine.clientsCount === 0) {
         db.ChatEvent.remove({}, () => {
-          Log.server('Cleared chat history');
+          Log.chat('Cleared chat history');
         });
       }
       // Otherwise broadcast and save leave action

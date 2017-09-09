@@ -57,44 +57,56 @@ const format = (transport, level, meta, body) => {
   return transport === 'console' ? winston.config.colorize(level, result) : result;
 };
 
-
 // ==================== LOGGER ==========================
 
-const logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)({
-      json: false,
-      showLevel: false,
-      colorize: true,
-      level: 'debug',
-      formatter: options => format('console', options.level, options.meta, options.message),
-    }),
-    new (winston.transports.File)({
-      filename: `logs/Build-${buildNumber}.log`,
-      json: false,
-      showLevel: false,
-      level: 'server',
-      formatter: options => format('file', options.level, options.meta, options.message),
-    }),
-  ],
-  levels: { error: 0, game: 1, chat: 1, server: 2, debug: 3 },
-  colors: { error: 'red', game: 'green', chat: 'white',  server: 'cyan', debug: 'grey' },
+const consoleTransports = new (winston.transports.Console)({
+  json: false,
+  showLevel: false,
+  colorize: true,
+  level: 'server',
+  name: 'console',
+  formatter: options => format('console', options.level, options.meta, options.message),
 });
+
+const fileTransports = [
+  new (winston.transports.File)({
+    filename: `logs/Build-${buildNumber}/game.log`,
+    json: false,
+    showLevel: false,
+    level: 'game',
+    name: 'file.game',
+    formatter: options => format('file', options.level, options.meta, options.message),
+  }),
+  new (winston.transports.File)({
+    filename: `logs/Build-${buildNumber}/master.log`,
+    json: false,
+    showLevel: false,
+    level: 'server',
+    name: 'file.master',
+    formatter: options => format('file', options.level, options.meta, options.message),
+  }),
+];
 
 // ==================== EXPORT LOGGER ==========================
 
 module.exports = (args) => {
-  // Restricted logging for tests
-  if (args.includes('test')) {
-    // Remove file logging
-    logger.remove(winston.transports.File);
-    if (fs.existsSync('logs/Build-Unknown.log')) { fs.unlink('logs/Build-Unknown.log'); }
-    if (args.includes('quiet')) {
-      // Remove console logging
-      logger.remove(winston.transports.Console);
+  const transports = [];
+  if (!args.includes('quiet')) { transports.push(consoleTransports); }
+  if (!args.includes('test')) {
+
+    // Ensure Log directory exists
+    if (!fs.existsSync('logs')) { fs.mkdirSync('logs'); }
+
+    // Create directory for this build's logs
+    if (!fs.existsSync(`logs/Build-${buildNumber}`)) {
+      fs.mkdirSync(`logs/Build-${buildNumber}`);
     }
+    fileTransports.forEach(transport => transports.push(transport));
   }
-  // Otherwise ensure Log directory exists
-  else if (!fs.existsSync('logs')) { fs.mkdirSync('logs'); }
-  return logger;
+
+  return new (winston.Logger)({
+    transports,
+    levels: { error: 0, game: 1, chat: 2, server: 2 },
+    colors: { error: 'red', game: 'green', chat: 'white', server: 'cyan' },
+  });
 };
