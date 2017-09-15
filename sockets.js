@@ -56,7 +56,7 @@ module.exports = (server, db, Log, game) => {
           socket.token = found.token;
 
           Log.game(socket.nickname, { action: 'bind', agent: ip, mode: socket.mode });
-          io.emit('chat action', socket.nickname, 'joined');
+          io.emit('chat action', socket.nickname, `joined as ${socket.mode}`);
           if (socket.mode === 'player') {
             enableGameEvents(socket);
           }

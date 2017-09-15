@@ -39,7 +39,7 @@ describe('Socket', () => {
     
           // Client 2 observes Client 1 joining and leaving game
           client2.on('chat action', (nickname, action) => {
-            if (action === 'joined') {
+            if (action.includes('joined')) {
               expect(nickname, '[ Join message broadcasted ]').to.equal('socketTests');
               client1.disconnect();
             }
