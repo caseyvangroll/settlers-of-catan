@@ -2,7 +2,7 @@
 $('div#chat-messages')[0].scrollTop = $('div#chat-messages')[0].scrollHeight;
 
 let hidden = false;
-$("div.chat-handle").click(() => {
+$("div#chat-handle").click(() => {
   if (hidden) { $("div#chat-overlay").animate({ 'right': '-292px' }, 400); }
   else { $("div#chat-overlay").animate({ 'right': '0' }, 400); }
   hidden = !hidden;
