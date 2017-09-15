@@ -1,5 +1,4 @@
 /* eslint-disable */
-socket.emit('bind user', document.cookie);
 $('div#chat-messages')[0].scrollTop = $('div#chat-messages')[0].scrollHeight;
 
 let hidden = false;

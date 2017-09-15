@@ -8,7 +8,6 @@ $(function () {
   var socket = io();
   var loud = true;
   ;
-  socket.emit('bind user', document.cookie);
   $('div#chat-messages')[0].scrollTop = $('div#chat-messages')[0].scrollHeight;
 
   var hidden = false;
@@ -446,7 +445,7 @@ $(function () {
     mapLocs(edgeLength);
     stage.addChild(frontdrop);
     renderer.render(stage);
-    socket.emit('ready');
+    socket.emit('bind user', document.cookie);
   };
 
   PIXI.loader.add('img/resource.png').add('img/vertex.png').load(setup);

@@ -64,7 +64,7 @@ const setup = () => {
   mapLocs(edgeLength);
   stage.addChild(frontdrop);
   renderer.render(stage);
-  socket.emit('ready');
+  socket.emit('bind user', document.cookie);
 };
 
 PIXI.loader

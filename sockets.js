@@ -57,16 +57,16 @@ module.exports = (server, db, Log, game) => {
 
           Log.game(socket.nickname, { action: 'bind', agent: ip, mode: socket.mode });
           io.emit('chat action', socket.nickname, 'joined');
+          if (socket.mode === 'player') {
+            enableGameEvents(socket);
+          }
+          socket.emit('state', game.state);
+          socket.emit('mode', socket.mode);
           new db.ChatEvent({
             body: `joined as ${socket.mode}`,
             nickname: socket.nickname,
             type: 'action',
           }).save();
-          socket.on('ready', () => {
-            enableGameEvents(socket);
-            socket.emit('state', game.state);
-            socket.emit('mode', socket.mode);
-          });
         }
         else {
           io.emit('chat action', socket.nickname, 'joined');
