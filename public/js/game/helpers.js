@@ -104,22 +104,30 @@ const pause = (toggle) => {
 
 const setState = (state, json) => {
   if (state === 'setup') {
-    pause(true);
-    $('div#non-colors').css('width', `${screen.width * 0.49}px`);
-    $('div#non-colors').css('height', `${screen.height}px`);
+    if (!mobile) {
+      pause(true);
+      $('div#non-colors').css('width', `${screen.width * 0.49}px`);
+      $('div#non-colors').css('height', `${screen.height}px`);
 
-    $('div#colors').css('min-width', `${screen.width * 0.11}px`);
-    $('div#colors').css('width', `calc((100% - ${screen.width * 0.49}px)/2)`);
-    $('div#colors').css('height', `${screen.height * 0.74}px`);
+      $('div#colors').css('min-width', `${screen.width * 0.11}px`);
+      $('div#colors').css('width', `calc((100% - ${screen.width * 0.49}px)/2)`);
+      $('div#colors').css('height', `${screen.height * 0.74}px`);
 
-    $('div#colors table').css('width', `${screen.width * 0.1}px`);
+      $('div#colors table').css('width', `${screen.width * 0.1}px`);
 
-    $('div#main-overlay').css('min-width', `${screen.width * 0.72}px`);
-    $('div#main-overlay').show();
+      $('div#main-overlay').css('min-width', `${screen.width * 0.72}px`);
+      $('div#main-overlay').show();
+    }
+    else {
+      // Don't bother adapting char selection screen for mobile
+      pause(true);
+      $('div#mobile-overlay').show();
+    }
   }
   else {
     $('canvas').show();
     $('div#main-overlay').hide();
+    $('div#mobile-overlay').hide();
     pause(false);
   }
 };

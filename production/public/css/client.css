@@ -20,6 +20,18 @@ canvas {
 	background-color: rgba(220,220,220,1);
 }
 
+#mobile-overlay {
+	position: fixed;
+	width:100%;
+	height:100%;
+	background-color: rgba(220,220,220,1);
+}
+
+#mobile-overlay h1 {
+	text-align: center;
+	margin-top: 50%;
+}
+
 #non-colors {
 	float: left;
 }
