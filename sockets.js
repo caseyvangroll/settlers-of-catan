@@ -7,6 +7,19 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (server, db, Log, game) => {
   const io = socketio.listen(server);
+
+  // ==================== GAME ==========================
+  const enableGameEvents = (socket) => {
+    socket.on('resource', (id) => {
+      socket.emit('highlight vertex', game.resources[id].vertices);
+    });
+
+    socket.on('vertex', (id) => {
+      socket.emit('highlight resource', game.vertices[id].resources);
+      socket.emit('highlight vertex', game.vertices[id].vertices);
+    });
+  };
+
   io.on('connection', (socket) => {
 
 // ==================== SETUP ==========================
@@ -37,14 +50,15 @@ module.exports = (server, db, Log, game) => {
         if (found) {
           socket.color = found.color;
           socket.ip = found.ip;
+          socket.mode = found.mode;
           socket.nickname = found.nickname;
           socket.state = found.state;
           socket.token = found.token;
 
-          Log.game(socket.nickname, { action: 'bind', agent: ip });
+          Log.game(socket.nickname, { action: 'bind', agent: ip, mode: socket.mode });
           io.emit('chat action', socket.nickname, 'joined');
           new db.ChatEvent({
-            body: 'joined',
+            body: `joined as ${socket.mode}`,
             nickname: socket.nickname,
             type: 'action',
           }).save();
@@ -59,6 +73,12 @@ module.exports = (server, db, Log, game) => {
           });
         }
       });
+    });
+
+    socket.on('ready', () => {
+      enableGameEvents(socket);
+      socket.emit('state', game.state);
+      socket.emit('mode', socket.mode);
     });
 
 // ==================== MESSAGES ==========================
@@ -98,17 +118,6 @@ module.exports = (server, db, Log, game) => {
 
       // Update user in db
       db.User.findOneAndUpdate({ token: socket.token }, { state: 'Disconnected.' });
-    });
-
-    // ==================== GAME ==========================
-
-    socket.on('resource', (id) => {
-      socket.emit('highlight vertex', game.resources[id].vertices);
-    });
-
-    socket.on('vertex', (id) => {
-      socket.emit('highlight resource', game.vertices[id].resources);
-      socket.emit('highlight vertex', game.vertices[id].vertices);
     });
   });
 };

@@ -1,8 +1,10 @@
 
 const helpers = require('./helpers');
-
+const Player = require('./player.js');
 const Vertex = require('./vertex.js');
 const Resource = require('./resource.js');
+
+// ==================== CREATE RESOURCES/VERTICES ==========================
 
 const resources = Array.apply(null, Array(19)).map((_, i) => String.fromCharCode(65 + i))  // A-S
   .reduce((acc, cur) => { acc[cur] = new Resource(cur); return acc; }, {});
@@ -30,6 +32,9 @@ helpers.idMap.forEach((mapping) => {
 });
 
 module.exports = {
+  MAX_PLAYERS: 4,
+  players: [],
   resources,
+  state: 'setup',
   vertices,
 };

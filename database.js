@@ -9,6 +9,7 @@ const user = new mongoose.Schema({
   color: String,
   createdAt: { type: Date, expires: 28800, default: Date.now },
   ip: String,
+  mode: String,
   nickname: String,
   state: String,
   token: String,

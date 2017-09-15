@@ -20,9 +20,10 @@ class Vertex {
     // Redefine hit area - i don't understand why all of this needs to be double what i calculated
     this.sprite.hitArea = new PIXI.Circle(0, 0, edgeLength / 3);
   }
-  setSprite(sprite) {
-    this.sprite = sprite;
-    this.sprite.interactive = true;
-    this.sprite.on('pointerdown', () => { clickVertex(this.id); });
+  setInteractive(toggle) {
+    this.sprite.interactive = toggle;
+    if (toggle) {
+      this.sprite.on('pointerdown', () => { clickVertex(this.id); });
+    }
   }
 }

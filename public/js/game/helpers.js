@@ -95,3 +95,32 @@ const resize = () => {
   renderer.view.style.left = `${parseInt(renderer.view.style.left.slice(0, -2)) + (deltaX / 2)}px`;
   renderer.view.style.top = `${parseInt(renderer.view.style.top.slice(0, -2)) + (deltaY / 2)}px`;
 };
+
+const pause = (toggle) => {
+  stage.filters = toggle ? [pauseFilter] : null;
+  frontdrop.interactive = toggle;
+  renderer.render(stage);
+};
+
+const setState = (state, json) => {
+  if (state === 'setup') {
+    pause(true);
+    $('div#non-colors').css('width', `${screen.width * 0.49}px`);
+    $('div#non-colors').css('height', `${screen.height}px`);
+
+    $('div#colors').css('min-width', `${screen.width * 0.11}px`);
+    $('div#colors').css('width', `calc((100% - ${screen.width * 0.49}px)/2)`);
+    $('div#colors').css('height', `${screen.height * 0.74}px`);
+
+    $('div#colors table').css('width', `${screen.width * 0.1}px`);
+
+    $('div#main-overlay').css('min-width', `${screen.width * 0.72}px`);
+    $('div#main-overlay').show();
+  }
+  else {
+    $('canvas').show();
+    $('div#main-overlay').hide();
+    pause(false);
+  }
+};
+

@@ -12,18 +12,73 @@
 
 </head>
 <body>
-<div class = "game-page">
+<div id = "game-page">
   <canvas></canvas>
-  <div class = "chat-overlay">
-   <div class = "chat-handle"></div>
-    <div class = "chat-messages">
+  <div id = "main-overlay">
+  <div id = "colors">
+  		<table class = "setup">
+  		<tr><td></td><td></td></tr>
+  		<tr><td></td><td></td></tr>
+  		<tr><td></td><td></td></tr>
+  		<tr><td></td><td></td></tr>
+  		<tr><td></td><td></td></tr>
+  		<tr><td></td><td></td></tr>
+  		<tr><td></td><td></td></tr>
+		</table>
+  	</div>
+  <div id = "non-colors">
+  	<table id = "character-cards" class = "setup">
+  		<tr>
+  			<td></td>
+  			<td></td>
+  			<td></td>
+  			<td></td>
+  			<td></td>
+  			<td></td>
+  		</tr>
+  		<tr>
+  			<td></td>
+  			<td></td>
+  			<td></td>
+  			<td></td>
+  			<td></td>
+  			<td></td>
+  		</tr>
+  	</table>
+  	<div id = "players">
+  		<table id = "player-cards" class = "setup">
+  		<tr>
+  			<td class = "self">
+  				<div class="character"></div>
+  				<div class="name"></div>
+  			</td>
+  			<td class = "other">
+  				<div class="character"></div>
+  				<div class="name"></div>
+  			</td>
+  			<td class = "other">
+  				<div class="character"></div>
+  				<div class="name"></div>
+  			</td>
+  			<td class = "other">
+  				<div class="character"></div>
+  				<div class="name"></div>
+  			</td>
+  		</tr>
+		</table>
+  	</div>
+  	</div>
+  </div>
+  <div id = "chat-overlay">
+   <div id = "chat-handle"></div>
+    <div id = "chat-messages">
       <ul id="messages">
       </ul>
     </div>
     <div class = "chat-form">
         <form class="chat-form" action="">
           <input class="chat-form" autocomplete="off"
-                 pattern='.+' oninvalid="this.setCustomValidity('Words go here.')" oninput="this.setCustomValidity('')" maxlength="500" required/>
+                 pattern=".+" oninvalid="this.setCustomValidity('Words go here.')" oninput="this.setCustomValidity('')" maxlength="500" required/>
         </form>
     </div>
   </div>

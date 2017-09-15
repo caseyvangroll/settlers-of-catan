@@ -27,9 +27,10 @@ class Resource {
       -edgeLength, edgeLength * (Math.sqrt(3)),
     ]);
   }
-  setSprite(sprite) {
-    this.sprite = sprite;
-    this.sprite.interactive = true;
-    this.sprite.on('pointerdown', () => { clickResource(this.id); });
+  setInteractive(toggle) {
+    this.sprite.interactive = toggle;
+    if (toggle) {
+      this.sprite.on('pointerdown', () => { clickResource(this.id); });
+    }
   }
 }

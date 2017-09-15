@@ -22,16 +22,39 @@ const clickVertex = (vertexID) => {
   renderer.render(stage);
 };
 
-socket.on('highlight vertex', (ids) => {
-  ids.forEach((id) => {
-    vertices[id].highlight(true);
+const registerGameActions = () => {
+  resources.ids.forEach((id) => {
+    resources[id].setInteractive(true);
   });
-  renderer.render(stage);
+  vertices.ids.forEach((id) => {
+    vertices[id].setInteractive(true);
+  });
+};
+
+socket.on('mode', (mode) => {
+  if (loud) { console.log(`mode ${mode}`); }
+  if (mode === 'player') {
+    registerGameActions();
+
+    socket.on('highlight vertex', (ids) => {
+      if (loud) { console.log(`highlight vertex ${ids}`); }
+      ids.forEach((id) => {
+        vertices[id].highlight(true);
+      });
+      renderer.render(stage);
+    });
+    
+    socket.on('highlight resource', (ids) => {
+      if (loud) { console.log(`highlight resource ${ids}`); }
+      ids.forEach((id) => {
+        resources[id].highlight(true);
+      });
+      renderer.render(stage);
+    });
+  }
 });
 
-socket.on('highlight resource', (ids) => {
-  ids.forEach((id) => {
-    resources[id].highlight(true);
-  });
-  renderer.render(stage);
+socket.on('state', (state, json) => {
+  if (loud) { console.log(`state ${state}, ${json}`); }
+  setState(state, json);
 });

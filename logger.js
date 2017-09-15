@@ -46,7 +46,7 @@ const format = (transport, level, meta, body) => {
   const ts = timestamp();
   let result = ts;
   switch (meta.action) {
-    case 'bind':       result += `[    Bind    ] <${meta.agent}> = ${body}`; break;
+    case 'bind':       result += `[    Bind    ] <${meta.agent}> = ${body} (${meta.mode})`; break;
     case 'connect':    result += `[   Connect  ] <${meta.agent}> ${lookup(meta.agent)}`; break;
     case 'disconnect': result += `[ Disconnect ] <${meta.agent}>`; break;
     case 'error':      result += `<<< ERROR >>>  <${meta.agent || 'Unknown'}> ${body}`; break;

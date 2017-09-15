@@ -5,16 +5,18 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 $(function () {
-  var socket = io();;
+  var socket = io();
+  var loud = true;
+  ;
   socket.emit('bind user', document.cookie);
-  $('div.chat-messages')[0].scrollTop = $('div.chat-messages')[0].scrollHeight;
+  $('div#chat-messages')[0].scrollTop = $('div#chat-messages')[0].scrollHeight;
 
   var hidden = false;
   $("div.chat-handle").click(function () {
     if (hidden) {
-      $("div.chat-overlay").animate({ 'right': '-292px' }, 400);
+      $("div#chat-overlay").animate({ 'right': '-292px' }, 400);
     } else {
-      $("div.chat-overlay").animate({ 'right': '0' }, 400);
+      $("div#chat-overlay").animate({ 'right': '0' }, 400);
     }
     hidden = !hidden;
   });
@@ -29,13 +31,22 @@ $(function () {
   // Add received messages to the chat (and scroll to see)
   socket.on('broadcast message', function (nickname, hexColor, msg) {
     $('#messages').append('<li style="color:' + hexColor + '"><b>' + nickname + '</b>: ' + msg + '</li>');
-    $("div.chat-messages").animate({ scrollTop: $("div.chat-messages")[0].scrollHeight }, "fast");
+    $("div#chat-messages").animate({ scrollTop: $("div#chat-messages")[0].scrollHeight }, "fast");
+    if (msg === "pause") {
+      pause(true);
+    } else if (msg === "unpause") {
+      pause(false);
+    } else if (msg === "setup") {
+      setState('setup');
+    } else if (msg === "game") {
+      setState('game');
+    }
   });
 
   // Add join notifications to the chat (and scroll to see)
   socket.on('chat action', function (nickname, action) {
     $('#messages').append('<li class="join-message"><center>' + nickname + ' has ' + action + '</center></li>');
-    $("div.chat-messages").animate({ scrollTop: $("div.chat-messages")[0].scrollHeight }, "fast");
+    $("div#chat-messages").animate({ scrollTop: $("div#chat-messages")[0].scrollHeight }, "fast");
   });;
 
   var Game = function Game() {
@@ -99,15 +110,16 @@ $(function () {
         this.sprite.hitArea = new PIXI.Polygon([-edgeLength * 2, 0, -edgeLength, -edgeLength * Math.sqrt(3), edgeLength, -edgeLength * Math.sqrt(3), edgeLength * 2, 0, edgeLength, edgeLength * Math.sqrt(3), -edgeLength, edgeLength * Math.sqrt(3)]);
       }
     }, {
-      key: 'setSprite',
-      value: function setSprite(sprite) {
+      key: 'setInteractive',
+      value: function setInteractive(toggle) {
         var _this = this;
 
-        this.sprite = sprite;
-        this.sprite.interactive = true;
-        this.sprite.on('pointerdown', function () {
-          clickResource(_this.id);
-        });
+        this.sprite.interactive = toggle;
+        if (toggle) {
+          this.sprite.on('pointerdown', function () {
+            clickResource(_this.id);
+          });
+        }
       }
     }]);
 
@@ -156,15 +168,16 @@ $(function () {
         this.sprite.hitArea = new PIXI.Circle(0, 0, edgeLength / 3);
       }
     }, {
-      key: 'setSprite',
-      value: function setSprite(sprite) {
+      key: 'setInteractive',
+      value: function setInteractive(toggle) {
         var _this2 = this;
 
-        this.sprite = sprite;
-        this.sprite.interactive = true;
-        this.sprite.on('pointerdown', function () {
-          clickVertex(_this2.id);
-        });
+        this.sprite.interactive = toggle;
+        if (toggle) {
+          this.sprite.on('pointerdown', function () {
+            clickVertex(_this2.id);
+          });
+        }
       }
     }]);
 
@@ -266,6 +279,34 @@ $(function () {
     renderer.view.style.left = parseInt(renderer.view.style.left.slice(0, -2)) + deltaX / 2 + 'px';
     renderer.view.style.top = parseInt(renderer.view.style.top.slice(0, -2)) + deltaY / 2 + 'px';
   };
+
+  var pause = function pause(toggle) {
+    stage.filters = toggle ? [pauseFilter] : null;
+    frontdrop.interactive = toggle;
+    renderer.render(stage);
+  };
+
+  var setState = function setState(state, json) {
+    if (state === 'setup') {
+      pause(true);
+      $('div#non-colors').css('width', screen.width * 0.49 + 'px');
+      $('div#non-colors').css('height', screen.height + 'px');
+
+      $('div#colors').css('min-width', screen.width * 0.11 + 'px');
+      $('div#colors').css('width', 'calc((100% - ' + screen.width * 0.49 + 'px)/2)');
+      $('div#colors').css('height', screen.height * 0.74 + 'px');
+
+      $('div#colors table').css('width', screen.width * 0.1 + 'px');
+
+      $('div#main-overlay').css('min-width', screen.width * 0.72 + 'px');
+      $('div#main-overlay').show();
+    } else {
+      $('canvas').show();
+      $('div#main-overlay').hide();
+      pause(false);
+    }
+  };
+
   ;
 
   var clearSelections = function clearSelections() {
@@ -291,18 +332,49 @@ $(function () {
     renderer.render(stage);
   };
 
-  socket.on('highlight vertex', function (ids) {
-    ids.forEach(function (id) {
-      vertices[id].highlight(true);
+  var registerGameActions = function registerGameActions() {
+    resources.ids.forEach(function (id) {
+      resources[id].setInteractive(true);
     });
-    renderer.render(stage);
+    vertices.ids.forEach(function (id) {
+      vertices[id].setInteractive(true);
+    });
+  };
+
+  socket.on('mode', function (mode) {
+    if (loud) {
+      console.log('mode ' + mode);
+    }
+    if (mode === 'player') {
+      registerGameActions();
+
+      socket.on('highlight vertex', function (ids) {
+        if (loud) {
+          console.log('highlight vertex ' + ids);
+        }
+        ids.forEach(function (id) {
+          vertices[id].highlight(true);
+        });
+        renderer.render(stage);
+      });
+
+      socket.on('highlight resource', function (ids) {
+        if (loud) {
+          console.log('highlight resource ' + ids);
+        }
+        ids.forEach(function (id) {
+          resources[id].highlight(true);
+        });
+        renderer.render(stage);
+      });
+    }
   });
 
-  socket.on('highlight resource', function (ids) {
-    ids.forEach(function (id) {
-      resources[id].highlight(true);
-    });
-    renderer.render(stage);
+  socket.on('state', function (state, json) {
+    if (loud) {
+      console.log('state ' + state + ', ' + json);
+    }
+    setState(state, json);
   });
   ;
 
@@ -321,11 +393,12 @@ $(function () {
 
   // PIXI objects
   var renderer = PIXI.autoDetectRenderer(gameWidth, gameHeight, { view: $('canvas')[0] }, false);
-  renderer.backgroundColor = 0Xc4daff;
+  // renderer.backgroundColor = 0Xc4daff;
   var stage = new PIXI.Container();
 
   // Make backdrop - used for dragging to entire canvas
-  var backdrop = new PIXI.Container();
+
+  var backdrop = new PIXI.Graphics().beginFill(0Xc4daff).drawRect(0, 0, gameWidth, gameHeight).endFill();
   backdrop.interactive = true;
   backdrop.hitArea = new PIXI.Rectangle(0, 0, gameWidth, gameHeight);
   backdrop.on('pointerdown', dragBegin);
@@ -335,38 +408,11 @@ $(function () {
 
   // Make frontdrop - used for masking to disable interacting with game
   var frontdrop = new PIXI.Container();
-  frontdrop.interactive = true;
   frontdrop.hitArea = new PIXI.Rectangle(0, 0, gameWidth, gameHeight);
 
-  // Make ticker for smooth visual transition to paused state
-  var pauseTicker = new PIXI.ticker.Ticker();
-  pauseTicker.autoStart = false;
-
-  var blurFilter = new PIXI.filters.BlurFilter();
-  blurFilter.blur = 5;
-  var MAX_BLUR = 5;
-  var deltaBlur = 1;
-
-  pauseTicker.add(function () {
-    blurFilter.blur += deltaBlur;
-    renderer.render(stage);
-
-    if (blurFilter.blur >= MAX_BLUR) {
-      frontdrop.interactive = true;
-      pauseTicker.stop();
-    } else if (blurFilter.blur <= 0) {
-      frontdrop.interactive = false;
-      blurFilter.blur = 0;
-      pauseTicker.stop();
-    }
-  });
-
-  stage.filters = [blurFilter];
-
-  frontdrop.on('pointerdown', function () {
-    deltaBlur *= -1;
-    pauseTicker.start();
-  });
+  // Make paused-state filter
+  var pauseFilter = new PIXI.filters.ColorMatrixFilter();
+  pauseFilter.desaturate();
 
   // Game Objects
   var game = new Game();
@@ -386,22 +432,23 @@ $(function () {
     var edgeLength = getSuggestedEdgeLength();
 
     resources.ids.forEach(function (id) {
-      resources[id].setSprite(new PIXI.Sprite(PIXI.loader.resources['img/resource.png'].texture));
+      resources[id].sprite = new PIXI.Sprite(PIXI.loader.resources['img/resource.png'].texture);
       resources[id].setEdgeLength(edgeLength);
       stage.addChild(resources[id].sprite);
     });
 
     vertices.ids.forEach(function (id) {
-      vertices[id].setSprite(new PIXI.Sprite(PIXI.loader.resources['img/vertex.png'].texture));
+      vertices[id].sprite = new PIXI.Sprite(PIXI.loader.resources['img/vertex.png'].texture);
       vertices[id].setEdgeLength(edgeLength);
       stage.addChild(vertices[id].sprite);
-
-      stage.addChild(frontdrop);
     });
 
     mapLocs(edgeLength);
+    stage.addChild(frontdrop);
+    pause(true);
     renderer.render(stage);
+    socket.emit('ready');
   };
 
-  PIXI.loader.add('img/resource.png').add('img/vertex.png').load(setup);
+  PIXI.loader.add('img/resource.png').add('img/vertex.png').add('img/displacementMap.jpg').load(setup);
 });
