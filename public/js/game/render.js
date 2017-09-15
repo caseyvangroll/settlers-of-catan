@@ -70,5 +70,4 @@ const setup = () => {
 PIXI.loader
   .add('img/resource.png')
   .add('img/vertex.png')
-  .add('img/displacementMap.jpg')
   .load(setup);
