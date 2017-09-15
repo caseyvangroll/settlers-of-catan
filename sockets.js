@@ -62,7 +62,11 @@ module.exports = (server, db, Log, game) => {
             nickname: socket.nickname,
             type: 'action',
           }).save();
-
+          socket.on('ready', () => {
+            enableGameEvents(socket);
+            socket.emit('state', game.state);
+            socket.emit('mode', socket.mode);
+          });
         }
         else {
           io.emit('chat action', socket.nickname, 'joined');
@@ -73,12 +77,6 @@ module.exports = (server, db, Log, game) => {
           });
         }
       });
-    });
-
-    socket.on('ready', () => {
-      enableGameEvents(socket);
-      socket.emit('state', game.state);
-      socket.emit('mode', socket.mode);
     });
 
 // ==================== MESSAGES ==========================

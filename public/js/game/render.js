@@ -63,7 +63,6 @@ const setup = () => {
 
   mapLocs(edgeLength);
   stage.addChild(frontdrop);
-  pause(true);
   renderer.render(stage);
   socket.emit('ready');
 };
