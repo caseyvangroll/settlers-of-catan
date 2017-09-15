@@ -41,12 +41,12 @@ module.exports = (server, db, Log, game) => {
 
 // ==================== BIND USER ==========================
 
-    socket.on('bind user', (cookies) => {
+    socket.on('bind user', (cookies, mobile) => {
       const signedToken = cookie.parse(cookies).superEvilVirus;
       const decodedToken = jwt.verify(signedToken, db.config.secret);
-
+      const assignedMode = (game.players.length < game.MAX_PLAYERS && !mobile) ? 'player' : 'spectator';
       // Find user (created via POST @ enter.html) and bind to socket
-      db.User.findOneAndUpdate({ nickname: decodedToken.nickname, token: signedToken }, { state: 'Connected.' }, (err, found) => {
+      db.User.findOneAndUpdate({ nickname: decodedToken.nickname, token: signedToken }, { mode: assignedMode, state: 'Connected.' }, (err, found) => {
         if (found) {
           socket.color = found.color;
           socket.ip = found.ip;

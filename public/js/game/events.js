@@ -32,7 +32,7 @@ const registerGameActions = () => {
 };
 
 socket.on('mode', (mode) => {
-  if (loud) { console.log(`mode ${mode}`); }
+  if (loud) { console.log(`mode: ${mode}`); }
   if (mode === 'player') {
     registerGameActions();
 
@@ -55,6 +55,6 @@ socket.on('mode', (mode) => {
 });
 
 socket.on('state', (state, json) => {
-  if (loud) { console.log(`state ${state}, ${json}`); }
+  if (loud) { console.log(`state: ${state}, ${json}`); }
   setState(state, json);
 });

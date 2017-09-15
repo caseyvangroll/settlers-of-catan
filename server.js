@@ -85,7 +85,7 @@ app.post('/enter.html', (req, res) => {
     new db.User({
       color: randomColor(),
       ip: userIP,
-      mode: (game.players.length < game.MAX_PLAYERS) ? 'player' : 'spectator',
+      mode: 'unassigned',
       nickname: req.body.nickname,
       state: 'Connecting...',
       token: newToken,
