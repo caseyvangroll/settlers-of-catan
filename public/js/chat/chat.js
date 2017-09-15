@@ -32,6 +32,6 @@ socket.on('broadcast message', function (nickname, hexColor, msg) {
 
 // Add join notifications to the chat (and scroll to see)
 socket.on('chat action', function (nickname, action) {
-  $('#messages').append(`<li class="join-message"><center>${nickname} has ${action}</center></li>`);
+  $('#messages').append(`<li class="join-message"><center>${nickname} ${action}</center></li>`);
   $("div#chat-messages").animate({ scrollTop: $("div#chat-messages")[0].scrollHeight }, "fast");
 });
