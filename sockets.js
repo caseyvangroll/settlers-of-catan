@@ -50,9 +50,9 @@ module.exports = (server, db, Log, game) => {
         if (found) {
           socket.color = found.color;
           socket.ip = found.ip;
-          socket.mode = found.mode;
+          socket.mode = assignedMode;
           socket.nickname = found.nickname;
-          socket.state = found.state;
+          socket.state = 'Connected.';
           socket.token = found.token;
 
           Log.game(socket.nickname, { action: 'bind', agent: ip, mode: socket.mode });
