@@ -31,30 +31,7 @@ const registerGameActions = () => {
   });
 };
 
-socket.on('mode', (mode) => {
-  if (loud) { console.log(`mode: ${mode}`); }
-  if (mode === 'player') {
-    registerGameActions();
-
-    socket.on('highlight vertex', (ids) => {
-      if (loud) { console.log(`highlight vertex ${ids}`); }
-      ids.forEach((id) => {
-        vertices[id].highlight(true);
-      });
-      renderer.render(stage);
-    });
-    
-    socket.on('highlight resource', (ids) => {
-      if (loud) { console.log(`highlight resource ${ids}`); }
-      ids.forEach((id) => {
-        resources[id].highlight(true);
-      });
-      renderer.render(stage);
-    });
-  }
-});
-
-socket.on('state', (state, json) => {
-  if (loud) { console.log(`state: ${state}, ${json}`); }
-  setState(state, json);
+socket.on('gamestate', (gamestate) => {
+  if (loud) { console.log(`game: ${JSON.stringify(gamestate)}`); }
+  loadGame(gamestate);
 });

@@ -102,33 +102,3 @@ const pause = (toggle) => {
   renderer.render(stage);
 };
 
-const setState = (state, json) => {
-  if (state === 'setup') {
-    if (!mobile) {
-      pause(true);
-      $('div#non-colors').css('width', `${screenWidth * 0.49}px`);
-      $('div#non-colors').css('height', `${screenHeight}px`);
-
-      $('div#colors').css('min-width', `${screenWidth * 0.11}px`);
-      $('div#colors').css('width', `calc((100% - ${screenWidth * 0.49}px)/2)`);
-      $('div#colors').css('height', `${screenHeight * 0.74}px`);
-
-      $('div#colors table').css('width', `${screenWidth * 0.1}px`);
-
-      $('div#main-overlay').css('min-width', `${screenWidth * 0.72}px`);
-      $('div#main-overlay').show();
-    }
-    else {
-      // Don't bother adapting char selection screen for mobile
-      pause(true);
-      $('div#mobile-overlay').show();
-    }
-  }
-  else {
-    $('canvas').show();
-    $('div#main-overlay').hide();
-    $('div#mobile-overlay').hide();
-    pause(false);
-  }
-};
-

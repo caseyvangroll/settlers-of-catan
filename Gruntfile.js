@@ -5,7 +5,7 @@ const prod = {
   html: ['public/**/*.html'],
   js: ['*.js', 'models/**/*.js', 'game/**/*.js', 'public/js/client.js', '!**/test/**', '!**/node_modules/**', '!**/production/**', '!Gruntfile.js'],
   misc: ['package.json', 'public/**/*', '!.*', '!**/*.js', '!**/*.html', '!public/js/**', '!**/?(logs|node_modules|production|test)/**'],
-  watch: ['public/js/**/*.js'],
+  watch: ['public/css/**/*.css', 'public/js/**/*.js', 'public//**/*.html'],
 };
 
 module.exports = (grunt) => {
@@ -106,7 +106,8 @@ module.exports = (grunt) => {
         src: [
           'public/js/common.js',
           'public/js/chat/*.js',
-          'public/js/game/classes/*.js',
+          'public/js/game/extenders/*.js',
+          'public/js/game/game.js',
           'public/js/game/helpers.js',
           'public/js/game/events.js',
           'public/js/game/render.js',

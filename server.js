@@ -9,7 +9,8 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 
 // Game object
-const game = require('./game/game.js');
+const Game = require('./game/game.js');
+const game = new Game();
 
 // Logging
 const Log = require('./logger')(process.argv);

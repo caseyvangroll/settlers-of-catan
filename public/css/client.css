@@ -1,5 +1,6 @@
 * {
 	margin: 0 auto;
+	font: 18px "Gill Sans MT", "Lucida Grande", "Arial";
 }
 
 body {
@@ -68,19 +69,22 @@ canvas {
 
 #player-cards td{
 	padding: 0;
-	border: 5px solid black;
+	width: 25%;
+	border: 5px solid;
 }
 
 #player-cards div.character {
 	height:90%;
 	width:100%;
-	background-color: red;
 }
 
 #player-cards div.name {
 	height:10%;
 	width:100%;
-	background-color: black;
+	padding-top: 4%;
+	text-align: center;
+	color: white;
+	background-color:  black;
 }
 
 #colors {
@@ -108,7 +112,6 @@ canvas {
 	top: 2%;
 	bottom:8%;
 	right: 0;
-	font: 18px "Gill Sans MT", "Lucida Grande", "Arial";
 	border-width: 1px;
 	border-right-width: 0px;
 	border-color: rgba(155,155,155, 1);;
@@ -128,14 +131,12 @@ div#chat-handle {
 
 div#chat-messages {
 	overflow-y: auto;
-/*	background-color: rgba(0,110,110, 1);*/
 	margin: 1% 2% 0 5%;
 	height:calc(100% - 44px);
 	position:relative;
 }
 
 div#chat-messages ul {
-/*	overflow-y: auto;*/
 	max-height:100%;
 	width:100%;
 	list-style-type: none;
@@ -165,7 +166,6 @@ div#chat-messages ul li.join-message {
 }
 
 div.chat-form {
-/*	background-color: rgba(110,0,110, 1);*/
 	position: absolute;
 	margin: 0 2% 1% 4%;
 	bottom: 0;
@@ -173,7 +173,6 @@ div.chat-form {
 	width: 100%
 }
 .chat-form {
-	font: 18px "Gill Sans MT", "Lucida Grande", "Arial";
 	max-width: 97%;
 }
 form.chat-form {

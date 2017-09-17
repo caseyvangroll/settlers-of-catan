@@ -61,8 +61,7 @@ module.exports = (server, db, Log, game) => {
           if (socket.mode === 'player') {
             enableGameEvents(socket);
           }
-          socket.emit('state', game.state);
-          socket.emit('mode', socket.mode);
+          socket.emit('gamestate', game.viewOf(socket.nickname));
           new db.ChatEvent({
             body: `joined as ${socket.mode}`,
             nickname: socket.nickname,
