@@ -11,7 +11,7 @@ const loadGame = (gamestate) => {
   setState(game.state);
 
   socket.on('highlight vertex', (ids) => {
-    if (loud) { console.log(`highlight vertex ${ids}`); }
+    Console(`highlight vertex ${ids}`);
     ids.forEach((id) => {
       vertices[id].highlight(true);
     });
@@ -19,7 +19,7 @@ const loadGame = (gamestate) => {
   });
 
   socket.on('highlight resource', (ids) => {
-    if (loud) { console.log(`highlight resource ${ids}`); }
+    Console(`highlight resource ${ids}`);
     ids.forEach((id) => {
       resources[id].highlight(true);
     });

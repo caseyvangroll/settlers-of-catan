@@ -2,7 +2,9 @@
 
 $(function () {
   var socket = io();
-  var loud = false;
+  var Console = function Console(msg) {
+    return console.log(msg);
+  };
   var game = void 0,
       resources = void 0,
       vertices = void 0;
@@ -172,9 +174,7 @@ $(function () {
     setState(game.state);
 
     socket.on('highlight vertex', function (ids) {
-      if (loud) {
-        console.log('highlight vertex ' + ids);
-      }
+      Console('highlight vertex ' + ids);
       ids.forEach(function (id) {
         vertices[id].highlight(true);
       });
@@ -182,9 +182,7 @@ $(function () {
     });
 
     socket.on('highlight resource', function (ids) {
-      if (loud) {
-        console.log('highlight resource ' + ids);
-      }
+      Console('highlight resource ' + ids);
       ids.forEach(function (id) {
         resources[id].highlight(true);
       });
@@ -329,9 +327,7 @@ $(function () {
   };
 
   socket.on('gamestate', function (gamestate) {
-    if (loud) {
-      console.log('game: ' + JSON.stringify(gamestate));
-    }
+    Console('game: ' + JSON.stringify(gamestate));
     loadGame(gamestate);
   });
   ;

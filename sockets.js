@@ -44,37 +44,52 @@ module.exports = (server, db, Log, game) => {
     socket.on('bind user', (cookies, mobile) => {
       const signedToken = cookie.parse(cookies).superEvilVirus;
       const decodedToken = jwt.verify(signedToken, db.config.secret);
-      const assignedMode = (game.players.length < game.MAX_PLAYERS && !mobile) ? 'player' : 'spectator';
 
       // Find user (created via POST @ enter.html) and bind to socket
-      db.User.findOneAndUpdate({ nickname: decodedToken.nickname, token: signedToken }, { mode: assignedMode, state: 'Connected.' }, (err, found) => {
+      db.User.findOne({ nickname: decodedToken.nickname, token: signedToken }, (err, found) => {
+
         if (found) {
+          // Use existing mode or assign new if fresh connect
+          if (found.mode === 'unassigned') {
+            if (game.players.length < game.MAX_PLAYERS && !mobile) {
+              found.mode = 'player';
+              game.addPlayer(found.nickname);
+            }
+            else {
+              found.mode = 'spectator';
+            }
+          }
+          found.state = 'Connected';
+
+          // Bind user properties to socket for easy access
           socket.color = found.color;
           socket.ip = found.ip;
-          socket.mode = assignedMode;
+          socket.mode = found.mode;
           socket.nickname = found.nickname;
-          socket.state = 'Connected.';
+          socket.state = found.state;
           socket.token = found.token;
+          Log.game(found.nickname, { action: 'bind', agent: ip, mode: found.mode });
 
-          Log.game(socket.nickname, { action: 'bind', agent: ip, mode: socket.mode });
-          io.emit('chat action', socket.nickname, `joined as ${socket.mode}`);
-          if (socket.mode === 'player') {
-            enableGameEvents(socket);
-          }
-          socket.emit('gamestate', game.viewOf(socket.nickname));
+          // Emit join message and pass gamestate -> if player enable server-side game event listeners
+          if (found.mode === 'player') { enableGameEvents(socket); }
+          io.emit('chat action', found.nickname, `joined as ${found.mode}`);
+          socket.emit('gamestate', game.viewOf(found.nickname));
+
+          // Update Database
+          found.save();
           new db.ChatEvent({
-            body: `joined as ${socket.mode}`,
-            nickname: socket.nickname,
+            body: `joined as ${found.mode}`,
+            nickname: found.nickname,
             type: 'action',
           }).save();
         }
         else {
-          io.emit('chat action', socket.nickname, 'joined');
           Log.error({
             action: 'error',
             agent: ip,
             message: `Couldn't find user in database...  ${JSON.stringify({ nickname: decodedToken.nickname, token: signedToken })}`,
           });
+          io.emit('chat action', socket.nickname, 'joined');
         }
       });
     });

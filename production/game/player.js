@@ -1,1 +1,1 @@
-class Player{constructor(nickname){this.nickname=nickname}toString(){return`Player ${this.nickname}`}}module.exports=Player;
+const _=require("underscore");class Player{constructor(nickname){this.nickname=nickname,this.secret="shhhhh"}publicView(){return _.pick(this,["nickname"])}privateView(){const view=_.clone(this);return view.self=!0,view}toString(){return`Player ${this.nickname}`}}module.exports=Player;

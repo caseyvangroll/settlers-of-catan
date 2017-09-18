@@ -32,6 +32,6 @@ const registerGameActions = () => {
 };
 
 socket.on('gamestate', (gamestate) => {
-  if (loud) { console.log(`game: ${JSON.stringify(gamestate)}`); }
+  Console(`game: ${JSON.stringify(gamestate)}`);
   loadGame(gamestate);
 });

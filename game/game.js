@@ -1,13 +1,14 @@
 
 const _ = require('underscore');
 const helpers = require('./helpers');
-// const Player = require('./player.js');
+const Player = require('./player.js');
 const Vertex = require('./vertex.js');
 const Resource = require('./resource.js');
 
 class Game {
   constructor() {
     this.MAX_PLAYERS = 4;
+    this.players = [];
     this.state = 'setup';
 
     // Create resources
@@ -34,12 +35,19 @@ class Game {
         this.vertices[v2].addEdge(v1);
       }
     });
-
-    this.players = {};
   }
 
-  viewOf() {
+  addPlayer(nickname) {
+    this.players.push(new Player(nickname));
+  }
+
+  viewOf(nickname) {
     const view = _.pick(this, ['resources', 'state', 'vertices']);
+    view.players = [];
+    this.players.forEach((player) => {
+      if (player.nickname === nickname) { view.players.push(player.privateView()); }
+      else { view.players.push(player.publicView()); }
+    });
     return JSON.stringify(view);
   }
 }
